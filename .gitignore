@@ -1,0 +1,45 @@
+# Ortak - Genel
+.env
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE/editor
+.vscode/
+.idea/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+pnpm-lock.yaml
+
+# coverage/test çıktıları
+coverage/
+test-results/
+
+# OS & Build
+dist/
+build/
+.temp/
+.cache/
+
+# React frontend
+frontend/.env
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.cache/
+
+# Backend için
+backend/.env
+backend/node_modules/
+backend/logs/
+backend/coverage/
+
+# MongoDB temp verileri
+*.local
+*.swo
+*.swp
