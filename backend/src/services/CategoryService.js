@@ -9,7 +9,7 @@ class CategoryService {
   async getCategoryById(id) {
     const category = await CategoryRepository.FindById(id);
     if (!category) {
-      throw new Error("Category not found");
+      throw new Error("Kategori bulunamadı");
     }
     return category;
   }
@@ -17,7 +17,7 @@ class CategoryService {
   async createCategory(categoryData) {
     const category = await CategoryRepository.Create(categoryData);
     if (!category) {
-      throw new Error("Failed to create category");
+      throw new Error("Kategori oluşturulamadı");
     }
     return category;
   }
@@ -25,7 +25,7 @@ class CategoryService {
   async updateCategory(id, categoryData) {
     const category = await CategoryRepository.Update(id, categoryData);
     if (!category) {
-      throw new Error("Failed to update category");
+      throw new Error("Kategori güncellenemedi");
     }
     return category;
   }
@@ -33,15 +33,17 @@ class CategoryService {
   async deleteCategory(id) {
     const category = await CategoryRepository.Delete(id);
     if (!category) {
-      throw new Error("Failed to delete category");
+      throw new Error("Kategori silinemedi");
     }
     return category;
   }
   async getTodosByCategoryId(id) {
     const todos = await CategoryRepository.FindTodosByCategoryId(id);
     if (!todos) {
-      throw new Error("Failed to get todos by category id");
+      throw new Error("Bu kategoriye ait not bulunamadı");
     }
     return todos;
   }
 }
+
+module.exports = new CategoryService();

@@ -16,7 +16,7 @@ class CategoryRepository {
     };
   }
 
-  async FindById() {
+  async FindById(id) {
     if (!mongoose.isValidObjectId(id)) {
       return null;
     }
@@ -53,7 +53,12 @@ class CategoryRepository {
     if (!mongoose.isValidObjectId(id)) {
       return null;
     }
-    const todos = await Todo.find({ categories: id });
+    const todos = await Todo.find({ categories: id }).populate({
+      path: "categories",
+      select: "id name color  ",
+      data: { deleted_at: null },
+    });
+
     return todos;
   }
 }

@@ -9,8 +9,11 @@ class TodoRepository {
     sort = "created_at",
     order = "asc",
     status,
-    piority,
+    priority,
   }) {
+    const currentPage = parseInt(page);
+    const currentLimit = parseInt(limit);
+
     const query = {
       deleted_at: null,
     };
@@ -19,26 +22,30 @@ class TodoRepository {
       query.status = status;
     }
 
-    if (piority) {
-      query.piority = piority;
+    if (priority) {
+      query.priority = priority;
     }
 
-    const skip = (page - 1) * limit;
+    const skip = (currentPage - 1) * currentLimit;
     const sortQuery = {};
     sortQuery[sort] = order === "asc" ? 1 : -1;
 
     const todos = await Todo.find(query)
+      .populate({
+        path: "category_ids",
+        select: "id name color",
+      })
       .sort(sortQuery)
       .skip(skip)
-      .limit(limit);
+      .limit(currentLimit);
     const total = await Todo.countDocuments(query);
 
     return {
       todos,
       pagination: createPagination({
         total,
-        page,
-        limit,
+        page: currentPage,
+        limit: currentLimit,
         count: todos.length,
       }),
     };
@@ -51,7 +58,11 @@ class TodoRepository {
     const todo = await Todo.findOne({
       _id: id,
       deleted_at: null,
+    }).populate({
+      path: "category_ids",
+      select: "id name color",
     });
+
     return todo;
   }
 
@@ -59,8 +70,8 @@ class TodoRepository {
     const todo = new Todo(data);
     await todo.save();
     return await Todo.findById(todo._id).populate({
-      path: "categories",
-      select: "id name color -_id",
+      path: "category_ids",
+      select: "id name color",
     });
   }
 
@@ -100,13 +111,60 @@ class TodoRepository {
     return todo;
   }
 
-  async Search(query) {
-    const searchRegex = new RegExp(query, "i");
-    const todos = await Todo.find({
+  async Search({
+    q,
+    page = 1,
+    limit = 10,
+    sort = "created_at",
+    order = "asc",
+    status,
+    priority,
+  }) {
+    const currentPage = parseInt(page);
+    const currentLimit = parseInt(limit);
+
+    const query = {
       deleted_at: null,
+    };
+
+    if (status) {
+      query.status = status;
+    }
+    if (priority) {
+      query.priority = priority;
+    }
+
+    const skip = (currentPage - 1) * currentLimit;
+    const sortQuery = {};
+    sortQuery[sort] = order === "asc" ? 1 : -1;
+
+    const searchRegex = new RegExp(q, "i");
+    const todos = await Todo.find({
+      ...query,
+      $or: [{ title: searchRegex }, { description: searchRegex }],
+    })
+      .populate({
+        path: "category_ids",
+        select: "id name color  ",
+      })
+      .sort(sortQuery)
+      .skip(skip)
+      .limit(currentLimit);
+
+    const total = await Todo.countDocuments({
+      ...query,
       $or: [{ title: searchRegex }, { description: searchRegex }],
     });
-    return todos;
+
+    return {
+      todos,
+      pagination: createPagination({
+        total,
+        page: currentPage,
+        limit: currentLimit,
+        count: todos.length,
+      }),
+    };
   }
 }
 
