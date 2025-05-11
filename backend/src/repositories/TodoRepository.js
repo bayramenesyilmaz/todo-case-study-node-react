@@ -38,6 +38,7 @@ class TodoRepository {
       .sort(sortQuery)
       .skip(skip)
       .limit(currentLimit);
+
     const total = await Todo.countDocuments(query);
 
     return {
@@ -165,6 +166,83 @@ class TodoRepository {
         count: todos.length,
       }),
     };
+  }
+
+  async GetStats() {
+    const currentDate = new Date();
+
+    const stats = await Todo.aggregate([
+      {
+        $match: {
+          deleted_at: null,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          pending: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "pending"] }, 1, 0],
+            },
+          },
+          in_progress: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "in_progress"] }, 1, 0],
+            },
+          },
+          completed: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "completed"] }, 1, 0],
+            },
+          },
+          cancelled: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "cancelled"] }, 1, 0],
+            },
+          },
+          total: {
+            $sum: 1,
+          },
+          overdue: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $lt: ["$due_date", currentDate] },
+                    { $eq: ["$status", "pending"] },
+                    { $ne: ["status", "cancelled"] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          pending: 1,
+          in_progress: 1,
+          completed: 1,
+          cancelled: 1,
+          total: 1,
+          overdue: 1,
+        },
+      },
+    ]);
+
+    return (
+      stats[0] || {
+        pending: 0,
+        in_progress: 0,
+        completed: 0,
+        cancelled: 0,
+        total: 0,
+        overdue: 0,
+      }
+    );
   }
 }
 

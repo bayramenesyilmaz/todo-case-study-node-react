@@ -3,6 +3,9 @@ const TodoRepository = require("../repositories/TodoRepository");
 class TodoService {
   async getAllTodos(query) {
     const todos = await TodoRepository.FindAll(query);
+    if (!todos) {
+      throw new Error("Notlar alınırken bir hata oluştu");
+    }
     return todos;
   }
 
@@ -41,7 +44,7 @@ class TodoService {
   async deleteTodo(id) {
     const todo = await TodoRepository.Delete(id);
     if (!todo) {
-      throw new Error("Not silinemedi");
+      return null;
     }
     return todo;
   }
@@ -52,6 +55,14 @@ class TodoService {
       return null;
     }
     return todos;
+  }
+
+  async getStats() {
+    const stats = await TodoRepository.GetStats();
+    if (!stats) {
+      throw new Error("İstatistikler alınırken bir hata oluştu");
+    }
+    return stats;
   }
 }
 

@@ -105,8 +105,9 @@ class TodoController {
     try {
       const todo = await TodoService.deleteTodo(req.params.id);
       if (!todo) {
-        return errorResponse(res, 404, "Not bulunamadı");
+        return errorResponse(res, 204, "Not bulunamadı");
       }
+
       return successResponse(res, 200, "Not silme işlemi başarılı");
     } catch (error) {
       return errorResponse(

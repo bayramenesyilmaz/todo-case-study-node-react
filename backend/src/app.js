@@ -5,6 +5,7 @@ const rateLimiter = require("express-rate-limit");
 const dotenv = require("dotenv");
 const todoRoutes = require("./routes/todoRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const statsRoutes = require("./routes/statsRoutes");
 const errorHandler = require("./middlewares/errorHandler");
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.use(limiter);
 
 app.use("/api/todos", todoRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/stats/todos", statsRoutes);
 
 app.use(errorHandler);
 
