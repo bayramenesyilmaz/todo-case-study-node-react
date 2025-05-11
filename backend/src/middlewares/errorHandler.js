@@ -1,14 +1,12 @@
-const { createLogger, transports, format } = require("winston");
+const logger = require("../utils/logger");
 
-const logger = createLogger({
-  level: "error",
-  format: format.combine(
-    format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    format.errors({ stack: true }),
-    format.prettyPrint()
-  ),
-  transports: [
-    new transports.Console(),
-    new transports.File({ filename: "logs/error.log" }),
-  ],
-});
+const errorHandler = (err, req, res, next) => {
+  logger.error(err.message, { stack: err.stack });
+
+  res.status(err.status || 500).json({
+    status: "error",
+    message: err.message || "Bir hata oluştu",
+  });
+};
+
+module.exports = errorHandler;

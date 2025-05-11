@@ -4,6 +4,8 @@ const helmet = require("helmet");
 const rateLimiter = require("express-rate-limit");
 const dotenv = require("dotenv");
 const todoRoutes = require("./routes/todoRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
+const errorHandler = require("./middlewares/errorHandler");
 
 dotenv.config();
 
@@ -23,5 +25,8 @@ const limiter = rateLimiter({
 app.use(limiter);
 
 app.use("/api/todos", todoRoutes);
+app.use("/api/categories", categoryRoutes);
+
+app.use(errorHandler);
 
 module.exports = app;
