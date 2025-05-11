@@ -1,0 +1,19 @@
+const TodoService = require("../services/TodoService");
+const { successResponse, errorResponse } = require("../utils/response");
+
+class StatsController {
+  async getStats(req, res) {
+    try {
+      const stats = await TodoService.getStats();
+      return successResponse(res, 200, "İstatistikler başarıyla alındı", stats);
+    } catch (error) {
+      return errorResponse(
+        res,
+        500,
+        "İstatistikler alınırken bir hata oluştu",
+        error.message
+      );
+    }
+  }
+}
+module.exports = new StatsController();

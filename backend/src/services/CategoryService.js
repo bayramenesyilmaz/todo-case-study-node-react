@@ -9,7 +9,7 @@ class CategoryService {
   async getCategoryById(id) {
     const category = await CategoryRepository.FindById(id);
     if (!category) {
-      throw new Error("Kategori bulunamadı");
+      return null;
     }
     return category;
   }
@@ -33,14 +33,14 @@ class CategoryService {
   async deleteCategory(id) {
     const category = await CategoryRepository.Delete(id);
     if (!category) {
-      throw new Error("Kategori silinemedi");
+      return null;
     }
     return category;
   }
   async getTodosByCategoryId(id) {
     const todos = await CategoryRepository.FindTodosByCategoryId(id);
     if (!todos) {
-      throw new Error("Bu kategoriye ait not bulunamadı");
+      return null;
     }
     return todos;
   }

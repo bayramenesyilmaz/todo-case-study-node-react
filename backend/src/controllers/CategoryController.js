@@ -86,7 +86,7 @@ class CategoryController {
     try {
       const category = await CategoryService.deleteCategory(req.params.id);
       if (!category) {
-        return errorResponse(res, 404, "Kategori bulunamadı");
+        return errorResponse(res, 204, "Kategori bulunamadı");
       }
       return successResponse(res, 200, "Kategori başarıyla silindi");
     } catch (error) {
