@@ -3,51 +3,124 @@ const mongoose = require("mongoose");
 const { createPagination } = require("../utils/pagination");
 
 class TodoRepository {
+  // Sabit değerler ve yardımcı metodlar
+  //BURAYI İNCELE
+  #priorityValues = {
+    high: 3,
+    medium: 2,
+    low: 1,
+  };
+
+  #createBasicQuery({ status, priority }) {
+    const query = { deleted_at: null };
+    if (status) query.status = status;
+    if (priority) query.priority = priority;
+    return query;
+  }
+
+  #createSortStage(sort, order) {
+    if (sort === "priority") {
+      return [
+        {
+          $addFields: {
+            priorityOrder: {
+              $switch: {
+                branches: [
+                  { case: { $eq: ["$priority", "high"] }, then: 3 },
+                  { case: { $eq: ["$priority", "medium"] }, then: 2 },
+                  { case: { $eq: ["$priority", "low"] }, then: 1 },
+                ],
+                default: 0,
+              },
+            },
+          },
+        },
+        { $sort: { priorityOrder: order === "asc" ? 1 : -1 } },
+      ];
+    }
+
+    const sortQuery = {};
+    sortQuery[sort] = order === "asc" ? 1 : -1;
+    return [{ $sort: sortQuery }];
+  }
+
   async FindAll({
     page = 1,
     limit = 10,
     sort = "created_at",
-    order = "asc",
+    order = "desc",
     status,
     priority,
   }) {
     const currentPage = parseInt(page);
     const currentLimit = parseInt(limit);
-
-    const query = {
-      deleted_at: null,
-    };
-
-    if (status) {
-      query.status = status;
-    }
-
-    if (priority) {
-      query.priority = priority;
-    }
-
     const skip = (currentPage - 1) * currentLimit;
-    const sortQuery = {};
-    sortQuery[sort] = order === "asc" ? 1 : -1;
 
-    const todos = await Todo.find(query)
-      .populate({
-        path: "category_ids",
-        select: "id name color",
-      })
-      .sort(sortQuery)
-      .skip(skip)
-      .limit(currentLimit);
+    const query = this.#createBasicQuery({ status, priority });
 
-    const total = await Todo.countDocuments(query);
+    const pipeline = [
+      { $match: query },
+      ...this.#createSortStage(sort, order),
+      { $skip: skip },
+      { $limit: currentLimit },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category_ids",
+          foreignField: "_id",
+          as: "categories",
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          description: 1,
+          status: 1,
+          priority: 1,
+          due_date: 1,
+          created_at: 1,
+          updated_at: 1,
+          category_ids: {
+            $map: {
+              input: "$categories",
+              as: "category",
+              in: {
+                id: "$$category._id",
+                name: "$$category.name",
+                color: "$$category.color",
+              },
+            },
+          },
+        },
+      },
+    ];
+
+    const [results, countResult] = await Promise.all([
+      Todo.aggregate(pipeline),
+      Todo.countDocuments(query),
+    ]);
+
+    const transitionedResults = results.map((todo) => {
+      const { _id, __v, category_ids, ...rest } = todo;
+
+      return {
+        id: _id,
+        ...rest,
+        categories: (category_ids || []).map((cat) => ({
+          id: cat.id || cat._id,
+          name: cat.name,
+          color: cat.color,
+        })),
+      };
+    });
 
     return {
-      todos,
+      todos: transitionedResults,
       pagination: createPagination({
-        total,
+        total: countResult,
         page: currentPage,
         limit: currentLimit,
-        count: todos.length,
+        count: transitionedResults.length,
       }),
     };
   }
@@ -112,41 +185,30 @@ class TodoRepository {
     return todo;
   }
 
-  async Search({
-    q,
-    page = 1,
-    limit = 10,
-    sort = "created_at",
-    order = "asc",
-    status,
-    priority,
-  }) {
-    const currentPage = parseInt(page);
-    const currentLimit = parseInt(limit);
+  async Search(params) {
+    const currentPage = parseInt(1);
+    const currentLimit = parseInt(10);
+
+    const { q } = params;
 
     const query = {
       deleted_at: null,
     };
 
-    if (status) {
-      query.status = status;
-    }
-    if (priority) {
-      query.priority = priority;
-    }
-
     const skip = (currentPage - 1) * currentLimit;
-    const sortQuery = {};
-    sortQuery[sort] = order === "asc" ? 1 : -1;
+    const sortQuery = { created_at: 1 };
+
+    console.log("sea : ", q);
 
     const searchRegex = new RegExp(q, "i");
+
     const todos = await Todo.find({
       ...query,
       $or: [{ title: searchRegex }, { description: searchRegex }],
     })
       .populate({
         path: "category_ids",
-        select: "id name color  ",
+        select: "id name color ",
       })
       .sort(sortQuery)
       .skip(skip)
@@ -209,8 +271,8 @@ class TodoRepository {
                 {
                   $and: [
                     { $lt: ["$due_date", currentDate] },
-                    { $eq: ["$status", "pending"] },
-                    { $ne: ["status", "cancelled"] },
+                    { $in: ["$status", ["pending", "in_progress"]] },
+                    { $ne: ["$status", "cancelled"] },
                   ],
                 },
                 1,

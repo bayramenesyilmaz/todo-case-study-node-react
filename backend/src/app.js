@@ -17,13 +17,13 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const limiter = rateLimiter({
-  windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
-  max: Number(process.env.RATE_LIMIT_MAX) || 100,
-  message: "Çok fazla istek yaptınız. Lütfen daha sonra tekrar deneyin.",
-});
+// const limiter = rateLimiter({
+//   windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
+//   max: Number(process.env.RATE_LIMIT_MAX) || 100,
+//   message: "Çok fazla istek yaptınız. Lütfen daha sonra tekrar deneyin.",
+// });
 
-app.use(limiter);
+// app.use(limiter);
 
 app.use("/api/todos", todoRoutes);
 app.use("/api/categories", categoryRoutes);

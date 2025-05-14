@@ -43,3 +43,38 @@ backend/coverage/
 *.local
 *.swo
 *.swp
+
+# Vite specific
+*.local
+.vite/
+dist-ssr/
+frontend/.vite/
+frontend/dist-ssr/
+
+# Editor & OS specific
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# IDE - VSCode specific
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+
+# Environment files
+*.env
+*.env.*
+!.env.example
+
+# Vite Cache
+.vite/deps/_metadata.json
+.vite/deps/package.json
+
+# Git line ending configuration
+* text=auto eol=lf
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf
