@@ -12,12 +12,11 @@ import {
 } from "../../store/slices/todoSlice";
 import { setTodoLoading } from "../../store/slices/loadingSlice";
 import { toast } from "react-toastify";
-import { MODAL_TYPES } from "../../constants/modalTypes";
 
 export const useTodoActions = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { openModal } = useModal();
+  const { showConfirmation, closeModal } = useModal();
   const loading = useSelector((state) => state.loading.todoActions);
 
   const refreshTodos = async () => {
@@ -38,6 +37,7 @@ export const useTodoActions = () => {
       const response = await todoService.createTodo(data);
       dispatch(addTodo(response.data));
       toast.success("Not başarıyla eklendi!");
+      closeModal();
     } catch (error) {
       toast.error("Not ekleme işlemi başarısız: " + error.message);
     } finally {
@@ -46,17 +46,17 @@ export const useTodoActions = () => {
   };
 
   const handleDelete = async (id) => {
-    openModal({
-      type: MODAL_TYPES.CONFIRM,
+    showConfirmation({
       title: "Notu Sil",
       message: "Bu notu silmek istediğinizden emin misiniz?",
       onConfirm: async () => {
         dispatch(setTodoLoading({ todoId: id, isLoading: true }));
         try {
           await todoService.deleteTodo(id);
-          dispatch(removeTodo(id));
           toast.success("Not başarıyla silindi!");
-          navigate("/todos");
+          dispatch(removeTodo(id));
+          closeModal();
+          navigate("/todos", { replace: true });
         } catch (error) {
           toast.error("Silme işlemi başarısız: " + error.message);
         } finally {
@@ -88,10 +88,10 @@ export const useTodoActions = () => {
     dispatch(setTodoLoading({ todoId: id, isLoading: true }));
     try {
       const response = await todoService.updateTodo(id, updates);
-      console.log("response : ", response.data);
-
       dispatch(updateTodoInList(response.data));
       toast.success("Not başarıyla güncellendi!");
+
+      closeModal();
     } catch (error) {
       toast.error("Güncelleme başarısız: " + error.message);
     } finally {

@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { motion } from "framer-motion";
-import { toast } from "react-toastify";
 import {
   CalendarIcon,
   ClipboardDocumentListIcon,
@@ -59,8 +58,6 @@ export default function TodoForm({ todo, onSubmit, onClose }) {
 
     await onSubmit(data);
 
-    onClose();
-
     setIsLoading(false);
   };
 
@@ -76,7 +73,7 @@ export default function TodoForm({ todo, onSubmit, onClose }) {
       >
         {/* Başlık */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
             Başlık
           </label>
           <Input
@@ -89,7 +86,7 @@ export default function TodoForm({ todo, onSubmit, onClose }) {
 
         {/* Açıklama */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
             Açıklama
           </label>
           <textarea
@@ -138,7 +135,7 @@ export default function TodoForm({ todo, onSubmit, onClose }) {
 
         {/* Bitiş Tarihi */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
             Bitiş Tarihi
             <span className="text-xs text-gray-500 ml-1">
               (Not ne zaman tamamlanmalı?)
@@ -158,7 +155,7 @@ export default function TodoForm({ todo, onSubmit, onClose }) {
 
         {/* Kategoriler */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
             Kategoriler
             <span className="text-xs text-gray-500 ml-1">
               (En az bir kategori seçin)

@@ -72,4 +72,16 @@ export const todoService = {
       );
     }
   },
+
+  async getTodoPriorityStats() {
+    try {
+      const response = await todoApis.getPriorityStats();
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        "Öncelik durumuna göre not istatistikleri alınırken bir hata oluştu: " +
+          error.message
+      );
+    }
+  },
 };

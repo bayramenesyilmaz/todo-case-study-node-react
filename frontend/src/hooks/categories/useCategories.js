@@ -11,10 +11,12 @@ import {
 } from "../../store/slices/categorySlice";
 import { categoryService } from "../../services/categoryService";
 import { toast } from "react-toastify";
+import { useModal } from "../../contexts/ModalContext";
 
 export function useCategories() {
   const dispatch = useDispatch();
   const { items, loading, error } = useSelector((state) => state.categories);
+  const { closeModal } = useModal();
 
   const fetchCategories = async () => {
     try {
@@ -36,7 +38,7 @@ export function useCategories() {
       dispatch(addCategory(response.data));
       dispatch(setLoading(false));
       toast.success("Kategori başarıyla oluşturuldu!");
-
+      closeModal();
       return response.data;
     } catch (error) {
       dispatch(setError(error.message));
@@ -53,7 +55,7 @@ export function useCategories() {
       dispatch(updateCategory(response.data));
       dispatch(setLoading(false));
       toast.success("Kategori başarıyla düzenlendi!");
-
+      closeModal();
       return response.data;
     } catch (error) {
       dispatch(setError(error.message));
@@ -70,6 +72,7 @@ export function useCategories() {
       dispatch(deleteCategory(id));
       dispatch(setLoading(false));
       toast.success("Kategori başarıyla silindi!");
+      closeModal();
     } catch (error) {
       dispatch(setError(error.message));
       dispatch(setLoading(false));

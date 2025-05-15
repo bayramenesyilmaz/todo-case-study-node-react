@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import KanbanBoard from "../components/todo/KanbanBoard";
 import TodoList from "../components/todo/TodoList";
 import TodoFilter from "../components/todo/TodoFilter";
@@ -7,17 +6,17 @@ import { motion } from "framer-motion";
 import Pagination from "../components/common/Pagination";
 import Loading from "../components/common/Loading";
 import Error from "../components/common/Error";
-import { useWindowWidth } from "../utils/formatters";
 import TodoSearchButton from "../components/todo/TodoSearchButton";
 import ChangeViewButtons from "../components/todo/ChangeViewButtons";
 import MobileFilterButton from "../components/todo/MobileFilterButton";
 import AddTodoButton from "../components/todo/AddTodoButton";
 import Title from "../components/common/Title";
 import NullData from "../components/common/NullData";
+import { useViewSettings } from "../hooks/useViewSettings";
 
 export default function TodoListPage() {
-  const width = useWindowWidth();
-  const [view, setView] = useState("kanban");
+  const { todoView, updateTodoView, isMobile } = useViewSettings();
+
   const {
     todos,
     pagination,
@@ -35,16 +34,6 @@ export default function TodoListPage() {
   const handleFilterChange = (newFilters) => {
     updateFilters(newFilters);
   };
-
-  const isMobile = width < 768;
-
-  useEffect(() => {
-    if (isMobile) {
-      setView("list");
-    } else {
-      setView("kanban");
-    }
-  }, [isMobile]);
 
   if (loading) return <Loading />;
   if (error) return <Error message={error} />;
@@ -79,12 +68,12 @@ export default function TodoListPage() {
           </div>
         </div>
 
-        {view === "kanban" ? (
+        {todoView === "kanban" ? (
           <KanbanBoard todos={todos} />
         ) : (
           <TodoList todos={todos} />
         )}
-        <ChangeViewButtons setView={setView} view={view} />
+        <ChangeViewButtons setView={updateTodoView} view={todoView} />
 
         <Pagination
           currentPage={pagination.current_page}

@@ -1,5 +1,22 @@
 import * as z from "zod";
 
+export const loginSchema = z.object({
+  email: z.string().email("Geçerli bir e-posta adresi giriniz"),
+  password: z.string().min(6, "Şifre en az 6 karakter olmalıdır"),
+});
+
+export const registerSchema = z
+  .object({
+    name: z.string().min(3, "Ad soyad en az 3 karakter olmalıdır"),
+    email: z.string().email("Geçerli bir e-posta adresi giriniz"),
+    password: z.string().min(6, "Şifre en az 6 karakter olmalıdır"),
+    passwordConfirm: z.string(),
+  })
+  .refine((data) => data.password === data.passwordConfirm, {
+    message: "Şifreler eşleşmiyor",
+    path: ["passwordConfirm"],
+  });
+
 export const todoSchema = z.object({
   title: z
     .string()

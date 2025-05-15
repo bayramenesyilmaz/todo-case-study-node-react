@@ -1,7 +1,7 @@
 export default function Input({ label, error, className, ...props }) {
   return (
     <div className="space-y-1">
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <label className="block text-sm font-medium text-gray-700 dark:text-white">{label}</label>
       <input
         {...props}
         className={`w-full px-3 py-2 border ${

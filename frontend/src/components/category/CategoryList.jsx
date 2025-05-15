@@ -8,9 +8,8 @@ export default function CategoryList({
   categories,
   updateCategoryById,
   deleteCategoryById,
-  closeModal,
 }) {
-  const { openModal } = useModal();
+  const { openModal, showConfirmation } = useModal();
 
   const handleEditCategory = (category) => {
     openModal({
@@ -21,7 +20,6 @@ export default function CategoryList({
           initialData={category}
           onSubmit={async (data) => {
             await updateCategoryById(category.id, data);
-            closeModal();
           }}
         />
       ),
@@ -29,8 +27,7 @@ export default function CategoryList({
   };
 
   const handleDeleteCategory = (id) => {
-    openModal({
-      type: MODAL_TYPES.CONFIRM,
+    showConfirmation({
       title: "Kategori Sil",
       message: "Bu kategoriyi silmek istediğinizden emin misiniz?",
       onConfirm: async () => await deleteCategoryById(id),

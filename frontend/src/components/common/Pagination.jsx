@@ -8,7 +8,7 @@ export default function Pagination({
   onPageChange,
 }) {
   return (
-    <div className="fixed bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white dark:bg-gray-800 px-3 py-2 rounded-md shadow-lg border-2 dark:border-gray-700">
+    <div className="z-50 fixed bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white dark:bg-gray-800 px-3 py-2 rounded-md shadow-lg border-2 dark:border-gray-700">
       <Button
         variant="ghost"
         size="icon"

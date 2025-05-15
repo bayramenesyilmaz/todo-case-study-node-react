@@ -1,11 +1,35 @@
-import React from "react";
 import { motion } from "framer-motion";
-import { BeakerIcon } from "@heroicons/react/24/solid";
+import {
+  ClockIcon,
+  PlayIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  ClockIcon as OverdueIcon,
+  DocumentDuplicateIcon,
+} from "@heroicons/react/24/outline";
 import StatisticCard from "./StatisticCard";
+import { getStatusColor } from "../../utils/formatters";
+import { useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
+import { setFilters } from "../../store/slices/todoSlice";
 
 export default function StatisticItems({ stats }) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleStatusClick = (status) => {
+    if (status === "all") {
+      dispatch(setFilters({ status: "" }));
+    } else if (status === "due_date") {
+      dispatch(setFilters({ sort: "due_date", order: "asc" }));
+    } else {
+      dispatch(setFilters({ status }));
+    }
+    navigate("/todos");
+  };
+
   return (
-    <>
+    <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <motion.div
           initial={{ x: -20, opacity: 0 }}
@@ -16,14 +40,8 @@ export default function StatisticItems({ stats }) {
             title="Bekleyen"
             count={stats.pending}
             color="yellow"
-            icon={
-              <BeakerIcon
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              />
-            }
+            icon={<ClockIcon className="w-6 h-6" />}
+            onClick={() => handleStatusClick("pending")}
           />
         </motion.div>
 
@@ -35,22 +53,9 @@ export default function StatisticItems({ stats }) {
           <StatisticCard
             title="Devam Eden"
             count={stats.in_progress}
-            color="blue"
-            icon={
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                />
-              </svg>
-            }
+            color={getStatusColor("in_progress")}
+            icon={<PlayIcon className="w-6 h-6" />}
+            onClick={() => handleStatusClick("in_progress")}
           />
         </motion.div>
 
@@ -62,22 +67,9 @@ export default function StatisticItems({ stats }) {
           <StatisticCard
             title="Tamamlanan"
             count={stats.completed}
-            color="green"
-            icon={
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            }
+            color={getStatusColor("completed")}
+            icon={<CheckCircleIcon className="w-6 h-6" />}
+            onClick={() => handleStatusClick("completed")}
           />
         </motion.div>
       </div>
@@ -91,22 +83,9 @@ export default function StatisticItems({ stats }) {
           <StatisticCard
             title="İptal Edilen"
             count={stats.cancelled}
-            color="red"
-            icon={
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            }
+            color={getStatusColor("cancelled")}
+            icon={<XCircleIcon className="w-6 h-6" />}
+            onClick={() => handleStatusClick("cancelled")}
           />
         </motion.div>
 
@@ -118,22 +97,9 @@ export default function StatisticItems({ stats }) {
           <StatisticCard
             title="Süresi Geçen"
             count={stats.overdue}
-            color="pink"
-            icon={
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            }
+            color="red"
+            icon={<OverdueIcon className="w-6 h-6" />}
+            onClick={() => handleStatusClick("due_date")}
           />
         </motion.div>
 
@@ -146,24 +112,11 @@ export default function StatisticItems({ stats }) {
             title="Toplam"
             count={stats.total}
             color="indigo"
-            icon={
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                />
-              </svg>
-            }
+            icon={<DocumentDuplicateIcon className="w-6 h-6" />}
+            onClick={() => handleStatusClick("all")}
           />
         </motion.div>
       </div>
-    </>
+    </div>
   );
 }

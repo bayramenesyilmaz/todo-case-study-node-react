@@ -31,9 +31,9 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+            <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
               Todo App
-            </span>
+            </div>
           </div>
 
           {/* Desktop Menu */}

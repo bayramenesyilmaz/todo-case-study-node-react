@@ -35,7 +35,6 @@ const todoSlice = createSlice({
       state.items = state.items.map((todo) =>
         todo.id === updatedTodo.id ? updatedTodo : todo
       );
-      console.log("updatedTodo : ", updatedTodo);
     },
     updatateTodoStatus: (state, action) => {
       const { id, status, updated_at } = action.payload;

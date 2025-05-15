@@ -53,6 +53,10 @@ export const todoApis = {
   getStats: async () => {
     return await axios.get(`${API_URL}/stats/todos`);
   },
+
+  getPriorityStats: async () => {
+    return await axios.get(`${API_URL}/stats/todos/priorities`);
+  },
 };
 
 export const categoryApis = {
