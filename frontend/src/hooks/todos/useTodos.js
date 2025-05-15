@@ -1,12 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
-import { todoService } from "../services/todoService";
+import { todoService } from "../../services/todoService";
 import {
   setTodos,
   setFilters,
   setPagination,
   setError,
-} from "../store/slices/todoSlice";
-import { setTodoLoading } from "../store/slices/loadingSlice";
+} from "../../store/slices/todoSlice";
+import { setTodoLoading } from "../../store/slices/loadingSlice";
 import { useEffect } from "react";
 
 export function useTodos() {

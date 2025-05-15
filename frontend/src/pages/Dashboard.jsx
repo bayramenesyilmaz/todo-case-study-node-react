@@ -3,7 +3,7 @@ import Loading from "../components/common/Loading";
 import Error from "../components/common/Error";
 import Header from "../components/dashboard/Header";
 import StatisticItems from "../components/dashboard/StatisticItems";
-import { useTodoStats } from "../hooks/useTodoStats";
+import { useTodoStats } from "../hooks/todos/useTodoStats";
 import DueSoonList from "../components/dashboard/DueSoonList";
 
 export default function Dashboard() {

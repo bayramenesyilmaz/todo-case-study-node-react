@@ -8,8 +8,8 @@ import {
   addCategory,
   updateCategory,
   deleteCategory,
-} from "../store/slices/categorySlice";
-import { categoryService } from "../services/categoryService";
+} from "../../store/slices/categorySlice";
+import { categoryService } from "../../services/categoryService";
 import { toast } from "react-toastify";
 
 export function useCategories() {

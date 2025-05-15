@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { todoService } from "../services/todoService";
+import { todoService } from "../../services/todoService";
 
 export function useTodoStats() {
   const [error, setError] = useState(false);

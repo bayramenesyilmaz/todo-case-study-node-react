@@ -1,5 +1,5 @@
 import { useModal } from "../../contexts/ModalContext";
-import { useTodoActions } from "../../hooks/useTodoActions";
+import { useTodoActions } from "../../hooks/todos/useTodoActions";
 import Button from "../common/Button";
 import TodoForm from "../todo/TodoForm";
 import { MODAL_TYPES } from "../../constants/modalTypes";

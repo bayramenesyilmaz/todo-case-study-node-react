@@ -2,7 +2,7 @@ import { useDrag } from "react-dnd";
 import TodoHeader from "./TodoHeader";
 import TodoMetaInfo from "./TodoMetaInfo";
 import TodoActions from "./TodoActions";
-import { useTodoActions } from "../../hooks/useTodoActions";
+import { useTodoActions } from "../../hooks/todos/useTodoActions";
 import PriorityBadge from "../badges/PriorityBadge";
 import { getStatusStyles } from "../../utils/formatters";
 

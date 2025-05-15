@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { useParams } from "react-router";
-import { useTodo } from "../hooks/useTodo";
+import { useTodo } from "../hooks/todos/useTodo";
+import { useTodoActions } from "../hooks/todos/useTodoActions";
 import { useModal } from "../contexts/ModalContext";
 import Loading from "../components/common/Loading";
 import Error from "../components/common/Error";
 import TodoForm from "../components/todo/TodoForm";
 import { MODAL_TYPES } from "../constants/modalTypes";
-import { useTodoActions } from "../hooks/useTodoActions";
 import { useNavigate } from "react-router";
 import NullData from "../components/common/NullData";
 import { TodoDetailHeader } from "../components/todo/detail/TodoDetailHeader";
