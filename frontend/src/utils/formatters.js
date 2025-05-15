@@ -14,22 +14,13 @@ export const useWindowWidth = () => {
 };
 
 export const getStatusColor = (status) => {
-  const colors = {
-    pending: "yellow",
-    in_progress: "blue",
-    completed: "green",
-    cancelled: "red",
-  };
-  return colors[status] || "gray";
+  const config = STATUS_CONFIG[status];
+  return config?.colors?.light?.text?.replace('text-', '')?.replace('-700', '') || 'gray';
 };
 
 export const getPriorityColor = (priority) => {
-  const colors = {
-    high: "red",
-    medium: "yellow",
-    low: "green",
-  };
-  return colors[priority] || "gray";
+  const config = PRIORITY_CONFIG[priority];
+  return config?.colors?.light?.text?.replace('text-', '')?.replace('-700', '') || 'gray';
 };
 
 export const getStatusStyles = (status) => {

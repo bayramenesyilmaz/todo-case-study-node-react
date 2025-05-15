@@ -25,23 +25,30 @@ export default function SearchModal({ isOpen, onClose }) {
                 onClick={onClose}
                 className="p-2 text-white hover:bg-white/10 rounded-full"
               >
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
 
             {/* Search Input */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-2 mb-4 shadow-lg">
-              <SearchBar
-                onSearch={setSearchQuery}
-                placeholder="Görev ara..."
-              />
+            <div className="bg-white dark:bg-gray-950 rounded-lg p-2 mb-4 shadow-lg">
+              <SearchBar onSearch={setSearchQuery} placeholder="Görev ara..." />
             </div>
 
             {/* Results */}
             <motion.div
-              className="flex-1 bg-white dark:bg-gray-800 rounded-lg p-4 overflow-auto"
+              className="flex-1 bg-white dark:bg-gray-950 rounded-lg p-4 overflow-auto"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}

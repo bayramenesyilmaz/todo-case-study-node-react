@@ -18,14 +18,16 @@ export default function ConfirmModal({
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md"
+            className="bg-white dark:bg-gray-950 rounded-lg p-6 w-full max-w-md shadow-lg"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
           >
-            <h3 className="text-lg font-medium mb-2">{title}</h3>
+            <h3 className="text-lg font-medium mb-2 text-black dark:text-white">
+              {title}
+            </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-6">{message}</p>
-            
+
             <div className="flex justify-end space-x-2 ">
               <Button variant="secondary" onClick={onClose}>
                 İptal
@@ -34,7 +36,6 @@ export default function ConfirmModal({
                 variant="danger"
                 onClick={() => {
                   onConfirm();
-                  onClose();
                 }}
               >
                 Onayla

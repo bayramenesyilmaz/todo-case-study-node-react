@@ -1,9 +1,8 @@
-import { useState } from "react";
 import TodoItem from "./TodoItem";
 import { motion } from "framer-motion";
 import Button from "../common/Button";
-import { useWindowWidth } from "../../utils/formatters";
 import NullData from "../common/NullData";
+import { useViewSettings } from "../../hooks/useViewSettings";
 
 const container = {
   hidden: { opacity: 0 },
@@ -21,20 +20,20 @@ const item = {
 };
 
 export default function TodoList({ todos }) {
-  const [viewMode, setViewMode] = useState("list"); // 'list' veya 'grid'
+  const { listView, updateListView } = useViewSettings();
 
   return (
     <div className="space-y-4">
       <div className="hidden md:flex justify-end space-x-2 mb-4">
         <Button
           children="Liste"
-          onClick={() => setViewMode("list")}
-          variant={viewMode === "list" ? "primary" : "secondary"}
+          onClick={() => updateListView("list")}
+          variant={listView === "list" ? "primary" : "secondary"}
         />
         <Button
           children="Grid"
-          onClick={() => setViewMode("grid")}
-          variant={viewMode === "grid" ? "primary" : "secondary"}
+          onClick={() => updateListView("grid")}
+          variant={listView === "grid" ? "primary" : "secondary"}
         />
       </div>
 
@@ -43,7 +42,7 @@ export default function TodoList({ todos }) {
         initial="hidden"
         animate="show"
         className={`${
-          viewMode === "grid"
+          listView === "grid"
             ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
             : "space-y-4"
         }`}

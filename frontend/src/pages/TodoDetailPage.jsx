@@ -7,14 +7,13 @@ import Loading from "../components/common/Loading";
 import Error from "../components/common/Error";
 import TodoForm from "../components/todo/TodoForm";
 import { MODAL_TYPES } from "../constants/modalTypes";
-import { useNavigate } from "react-router";
 import NullData from "../components/common/NullData";
 import { TodoDetailHeader } from "../components/todo/detail/TodoDetailHeader";
 import { TodoDetailContent } from "../components/todo/detail/TodoDetailContent";
 
 export default function TodoDetailPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
+
   const { todo, loading, error, setRender } = useTodo(id);
   const { handleUpdate, handleDelete } = useTodoActions();
   const { openModal, closeModal } = useModal();
@@ -29,7 +28,6 @@ export default function TodoDetailPage() {
           onSubmit={async (data) => {
             await handleUpdate(id, data);
             setRender();
-            closeModal();
           }}
           onClose={closeModal}
         />

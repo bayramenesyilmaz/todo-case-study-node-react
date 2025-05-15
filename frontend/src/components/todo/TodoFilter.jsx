@@ -1,4 +1,3 @@
-import React from "react";
 import Select from "../common/Select";
 import { useModal } from "../../contexts/ModalContext";
 

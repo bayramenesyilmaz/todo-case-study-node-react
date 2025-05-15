@@ -63,7 +63,7 @@ export default function Modal({
             </div>
 
             {/* Content */}
-            <div className="flex-1 px-6 py-4 overflow-auto bg-white dark:bg-gray-800">
+            <div className="flex-1 px-6 py-4 overflow-auto bg-white dark:bg-gray-800 text-black dark:text-white ">
               <div className="relative">{children}</div>
             </div>
           </motion.div>

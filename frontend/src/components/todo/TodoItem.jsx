@@ -5,6 +5,7 @@ import TodoActions from "./TodoActions";
 import { useTodoActions } from "../../hooks/todos/useTodoActions";
 import PriorityBadge from "../badges/PriorityBadge";
 import { getStatusStyles } from "../../utils/formatters";
+import { Spinner } from "../common/Spinner";
 
 export default function TodoItem({ todo, isDraggable = false }) {
   const { isLoading } = useTodoActions();
@@ -29,12 +30,12 @@ export default function TodoItem({ todo, isDraggable = false }) {
         transition-all duration-200
         mb-2 flex flex-col items-end
         ${isDraggable ? "cursor-move" : ""} 
-        ${isDragging ? "opacity-50 scale-95" : "opacity-100"}
+        ${isDragging || loading ? "opacity-50 scale-95" : "opacity-100"}
       `}
     >
       <div className="w-full flex justify-between items-center">
         <PriorityBadge priority={todo.priority} />
-        <TodoActions todo={todo} />
+        {loading ? <Spinner /> : <TodoActions todo={todo} />}
       </div>
       <TodoHeader todo={todo} />
       <TodoMetaInfo todo={todo} />

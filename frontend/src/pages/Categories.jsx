@@ -17,7 +17,7 @@ export default function Categories() {
     updateCategoryById,
     deleteCategoryById,
   } = useCategories();
-  const { openModal, closeModal } = useModal();
+  const { openModal } = useModal();
 
   const handleCreateCategory = () => {
     openModal({
@@ -27,7 +27,6 @@ export default function Categories() {
         <CategoryForm
           onSubmit={async (data) => {
             await createCategory(data);
-            closeModal();
           }}
         />
       ),
@@ -50,7 +49,6 @@ export default function Categories() {
         categories={categories}
         updateCategoryById={updateCategoryById}
         deleteCategoryById={deleteCategoryById}
-        closeModal={closeModal}
       />
     </div>
   );

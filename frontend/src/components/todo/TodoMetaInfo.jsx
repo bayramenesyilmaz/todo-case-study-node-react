@@ -3,6 +3,7 @@ import { formatDate, getStatusStyles, isOverdue } from "../../utils/formatters";
 
 export default function TodoMetaInfo({ todo }) {
   const overdue = isOverdue(todo.due_date);
+  const isCompleted = todo.status === "completed";
   const { label, className } = getStatusStyles(todo.status);
 
   return (
@@ -13,7 +14,7 @@ export default function TodoMetaInfo({ todo }) {
         <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
           <CalendarIcon className="w-4 h-4" />
           <span>Bitiş: {formatDate(todo.due_date)}</span>
-          {overdue && (
+          {!isCompleted && overdue && (
             <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-200">
               Gecikmiş
             </span>

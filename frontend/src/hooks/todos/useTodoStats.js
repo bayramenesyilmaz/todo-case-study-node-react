@@ -1,25 +1,34 @@
 import { useState, useEffect } from "react";
 import { todoService } from "../../services/todoService";
+import { useSelector } from "react-redux";
 
 export function useTodoStats() {
+  const todosStore = useSelector((state) => state.todos.items);
+  
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState([]);
+  const [priorityStats, setPriorityStats] = useState([]);
 
   useEffect(() => {
-    const fetchTodos = async () => {
+    const fetchStats = async () => {
       try {
-        const response = await todoService.getTodoStats();
-        setStats(response.data);
+        const [statsResponse, priorityResponse] = await Promise.all([
+          todoService.getTodoStats(),
+          todoService.getTodoPriorityStats(),
+        ]);
+
+        setStats(statsResponse.data);
+        setPriorityStats(priorityResponse.data);
       } catch (error) {
-        setError(true);
+        setError(error.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTodos();
-  }, []);
+    fetchStats();
+  }, [todosStore]);
 
-  return { stats, error, loading };
+  return { stats, priorityStats, error, loading };
 }
