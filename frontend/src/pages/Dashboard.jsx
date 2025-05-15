@@ -10,7 +10,6 @@ export default function Dashboard() {
   const { error, loading, stats } = useTodoStats();
 
   if (loading) return <Loading />;
-
   if (error) return <Error message={error} />;
 
   return (

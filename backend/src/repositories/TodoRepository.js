@@ -84,7 +84,11 @@ class TodoRepository {
       { _id: id, deleted_at: null },
       { ...todoData, updated_at: Date.now() },
       { new: true }
-    );
+    ).populate({
+      path: "category_ids",
+      select: "id name color",
+    });
+
     return todo;
   }
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -10,6 +10,7 @@ import {
   deleteCategory,
 } from "../store/slices/categorySlice";
 import { categoryService } from "../services/categoryService";
+import { toast } from "react-toastify";
 
 export function useCategories() {
   const dispatch = useDispatch();
@@ -20,8 +21,11 @@ export function useCategories() {
       dispatch(setLoading(true));
       const response = await categoryService.getAllCategories();
       dispatch(setCategories(response.data.categories));
+      dispatch(setLoading(false));
     } catch (error) {
       dispatch(setError(error.message));
+      dispatch(setLoading(false));
+      throw error;
     }
   };
 
@@ -30,9 +34,14 @@ export function useCategories() {
       dispatch(setLoading(true));
       const response = await categoryService.createCategory(data);
       dispatch(addCategory(response.data));
+      dispatch(setLoading(false));
+      toast.success("Kategori başarıyla oluşturuldu!");
+
       return response.data;
     } catch (error) {
       dispatch(setError(error.message));
+      dispatch(setLoading(false));
+      toast.error("Bir hata oluştu: " + error.message);
       throw error;
     }
   };
@@ -42,9 +51,14 @@ export function useCategories() {
       dispatch(setLoading(true));
       const response = await categoryService.updateCategory(id, data);
       dispatch(updateCategory(response.data));
+      dispatch(setLoading(false));
+      toast.success("Kategori başarıyla düzenlendi!");
+
       return response.data;
     } catch (error) {
       dispatch(setError(error.message));
+      dispatch(setLoading(false));
+      toast.error("Bir hata oluştu: " + error.message);
       throw error;
     }
   };
@@ -54,8 +68,12 @@ export function useCategories() {
       dispatch(setLoading(true));
       await categoryService.deleteCategory(id);
       dispatch(deleteCategory(id));
+      dispatch(setLoading(false));
+      toast.success("Kategori başarıyla silindi!");
     } catch (error) {
       dispatch(setError(error.message));
+      dispatch(setLoading(false));
+      toast.error("Bir hata oluştu: " + error.message);
       throw error;
     }
   };

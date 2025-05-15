@@ -58,7 +58,7 @@ const KanbanColumn = ({ title, status, todos, onDrop }) => {
       ref={drop}
       className={`flex flex-col h-[75vh] p-4 bg-white dark:bg-gray-800 rounded-lg 
         border-t-4 ${columnColors[status]} 
-        transition-all duration-200 border-2
+        transition-all duration-200
         ${isOver ? "bg-gray-50 dark:bg-gray-700" : ""}`}
     >
       <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-4">
