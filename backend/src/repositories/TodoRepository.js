@@ -202,8 +202,6 @@ class TodoRepository {
     const skip = (currentPage - 1) * currentLimit;
     const sortQuery = { created_at: 1 };
 
-    console.log("sea : ", q);
-
     const searchRegex = new RegExp(q, "i");
 
     const todos = await Todo.find({
@@ -307,6 +305,55 @@ class TodoRepository {
         cancelled: 0,
         total: 0,
         overdue: 0,
+      }
+    );
+  }
+
+  async GetPriorityStats() {
+    const stats = await Todo.aggregate([
+      {
+        $match: {
+          deleted_at: null,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          low: {
+            $sum: {
+              $cond: [{ $eq: ["$priority", "low"] }, 1, 0],
+            },
+          },
+          medium: {
+            $sum: {
+              $cond: [{ $eq: ["$priority", "medium"] }, 1, 0],
+            },
+          },
+          high: {
+            $sum: {
+              $cond: [{ $eq: ["$priority", "high"] }, 1, 0],
+            },
+          },
+          total: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          low: 1,
+          medium: 1,
+          high: 1,
+          total: 1,
+        },
+      },
+    ]);
+
+    return (
+      stats[0] || {
+        low: 0,
+        medium: 0,
+        high: 0,
+        total: 0,
       }
     );
   }

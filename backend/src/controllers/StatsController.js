@@ -15,5 +15,24 @@ class StatsController {
       );
     }
   }
+
+  async getPriorityStats(req, res) {
+    try {
+      const stats = await TodoService.getPriorityStats();
+      return successResponse(
+        res,
+        200,
+        "Öncelik istatistikleri başarıyla alındı",
+        stats
+      );
+    } catch (error) {
+      return errorResponse(
+        res,
+        500,
+        "Öncelik istatistikleri alınırken bir hata oluştu",
+        error.message
+      );
+    }
+  }
 }
 module.exports = new StatsController();
