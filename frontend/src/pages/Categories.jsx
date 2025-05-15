@@ -1,4 +1,3 @@
-import { useCategories } from "../hooks/useCategories";
 import { useModal } from "../contexts/ModalContext";
 import CategoryForm from "../components/category/CategoryForm";
 import Button from "../components/common/Button";
@@ -7,6 +6,7 @@ import Error from "../components/common/Error";
 import CategoryList from "../components/category/CategoryList";
 import { MODAL_TYPES } from "../constants/modalTypes";
 import Title from "../components/common/Title";
+import { useCategories } from "../hooks/categories/useCategories";
 
 export default function Categories() {
   const {

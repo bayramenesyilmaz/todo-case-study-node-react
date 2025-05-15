@@ -3,7 +3,7 @@ import {
   EllipsisVerticalIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useRef, useState } from "react";
-import { useTodoActions } from "../../hooks/useTodoActions";
+import { useTodoActions } from "../../hooks/todos/useTodoActions";
 
 export default function StatusDropdown({ todo }) {
   const ref = useRef();
@@ -54,7 +54,7 @@ export default function StatusDropdown({ todo }) {
     <div className="relative" ref={ref}>
       <button
         onClick={onToggle}
-        className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+        className="p-2 text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
         title="Durum Değiştir"
         disabled={loading}
       >

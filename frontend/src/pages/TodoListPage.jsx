@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import KanbanBoard from "../components/todo/KanbanBoard";
 import TodoList from "../components/todo/TodoList";
 import TodoFilter from "../components/todo/TodoFilter";
-import { useTodos } from "../hooks/useTodos";
+import { useTodos } from "../hooks/todos/useTodos";
 import { motion } from "framer-motion";
 import Pagination from "../components/common/Pagination";
 import Loading from "../components/common/Loading";

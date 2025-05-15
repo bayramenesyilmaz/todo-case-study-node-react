@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { todoService } from "../services/todoService";
+import { todoService } from "../../services/todoService";
 
 export function useTodo(id) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  // Redux store'dan todo'yu al
   const todoFromStore = useSelector((state) =>
     state.todos.items.find((todo) => todo.id === id)
   );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [todo, setTodo] = useState(todoFromStore);
   const [shouldRefresh, setShouldRefresh] = useState(false);
 
@@ -26,12 +25,12 @@ export function useTodo(id) {
       }
     };
 
-    // Redux store'da todo varsa ve yenileme istenmemişse store'dan al
     if (todoFromStore && !shouldRefresh) {
       setTodo(todoFromStore);
     } else {
-      // Redux store'da yoksa veya yenileme istenmişse API'den al
-      fetchTodo();
+      if (id) {
+        fetchTodo();
+      }
     }
   }, [id, todoFromStore, shouldRefresh]);
 

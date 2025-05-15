@@ -1,7 +1,7 @@
 import { useDrop } from "react-dnd";
 import { motion, AnimatePresence } from "framer-motion";
 import TodoItem from "./TodoItem";
-import { useTodoActions } from "../../hooks/useTodoActions";
+import { useTodoActions } from "../../hooks/todos/useTodoActions";
 
 export default function KanbanBoard({ todos }) {
   const { handleStatusChange, isLoading } = useTodoActions();

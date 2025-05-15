@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { useModal } from "../contexts/ModalContext";
-import { todoService } from "../services/todoService";
+import { useModal } from "../../contexts/ModalContext";
+import { todoService } from "../../services/todoService";
 import {
   updateTodoInList,
   removeTodo,
@@ -9,10 +9,10 @@ import {
   setError,
   addTodo,
   updatateTodoStatus,
-} from "../store/slices/todoSlice";
-import { setTodoLoading } from "../store/slices/loadingSlice";
+} from "../../store/slices/todoSlice";
+import { setTodoLoading } from "../../store/slices/loadingSlice";
 import { toast } from "react-toastify";
-import { MODAL_TYPES } from "../constants/modalTypes";
+import { MODAL_TYPES } from "../../constants/modalTypes";
 
 export const useTodoActions = () => {
   const dispatch = useDispatch();

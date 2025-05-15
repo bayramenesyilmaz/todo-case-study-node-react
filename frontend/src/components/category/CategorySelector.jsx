@@ -1,4 +1,4 @@
-import { useCategories } from "../../hooks/useCategories";
+import { useCategories } from "../../hooks/categories/useCategories";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function CategorySelector({ value = [], onChange, error }) {
@@ -52,12 +52,12 @@ export default function CategorySelector({ value = [], onChange, error }) {
                 : " hover:bg-gray-300 dark:hover:bg-gray-800"
             }`}
           >
-            <div className="flex items-center gap-2">
-              <div
+            <div className="flex items-center gap-2 ">
+              <span
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: category.color }}
               />
-              {category.name}
+              <span className=" flex-1 line-clamp-1">{category.name}</span>
             </div>
           </button>
         ))}

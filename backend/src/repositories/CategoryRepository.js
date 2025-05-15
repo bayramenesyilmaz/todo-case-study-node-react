@@ -53,10 +53,13 @@ class CategoryRepository {
     if (!mongoose.isValidObjectId(id)) {
       return null;
     }
-    const todos = await Todo.find({ categories: id }).populate({
-      path: "categories",
-      select: "id name color  ",
-      data: { deleted_at: null },
+
+    const todos = await Todo.find({
+      category_ids: id,
+      deleted_at: null,
+    }).populate({
+      path: "category_ids",
+      select: "id name color",
     });
 
     return todos;

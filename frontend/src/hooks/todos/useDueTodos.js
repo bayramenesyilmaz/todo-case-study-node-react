@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { todoService } from "../services/todoService";
+import { todoService } from "../../services/todoService";
 import { useSelector } from "react-redux";
 
 export function useDueTodos() {

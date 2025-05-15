@@ -1,7 +1,8 @@
-import { useDueTodos } from "../../hooks/useDueTodos";
+import { useDueTodos } from "../../hooks/todos/useDueTodos";
 import Error from "../common/Error";
 import Loading from "../common/Loading";
 import NullData from "../common/NullData";
+import Title from "../common/Title";
 import TodoList from "../todo/TodoList";
 
 export default function DueSoonList() {
@@ -14,9 +15,7 @@ export default function DueSoonList() {
 
   return (
     <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
-      <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-        Yaklaşan bitiş tarihleri olan notlar
-      </h2>
+      <Title text="Yaklaşan bitiş tarihleri olan notlar" />
       <TodoList todos={todos} />
     </div>
   );
