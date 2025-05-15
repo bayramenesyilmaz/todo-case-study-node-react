@@ -1,24 +1,27 @@
-import React from "react";
 import Button from "../common/Button";
 import CategoryForm from "./CategoryForm";
 import { useModal } from "../../contexts/ModalContext";
+import { MODAL_TYPES } from "../../constants/modalTypes";
+import { Link } from "react-router";
 
 export default function CategoryList({
   categories,
   updateCategoryById,
   deleteCategoryById,
+  closeModal,
 }) {
   const { openModal } = useModal();
 
   const handleEditCategory = (category) => {
     openModal({
+      type: MODAL_TYPES.GENERAL,
       title: "Kategori Düzenle",
       content: (
         <CategoryForm
           initialData={category}
           onSubmit={async (data) => {
             await updateCategoryById(category.id, data);
-            openModal(null);
+            closeModal();
           }}
         />
       ),
@@ -27,40 +30,30 @@ export default function CategoryList({
 
   const handleDeleteCategory = (id) => {
     openModal({
+      type: MODAL_TYPES.CONFIRM,
       title: "Kategori Sil",
-      content: (
-        <div className="space-y-4">
-          <p>Bu kategoriyi silmek istediğinizden emin misiniz?</p>
-          <div className="flex justify-end space-x-2">
-            <Button variant="secondary" onClick={() => openModal(null)}>
-              İptal
-            </Button>
-            <Button
-              variant="danger"
-              onClick={async () => {
-                await deleteCategoryById(id);
-                openModal(null);
-              }}
-            >
-              Sil
-            </Button>
-          </div>
-        </div>
-      ),
+      message: "Bu kategoriyi silmek istediğinizden emin misiniz?",
+      onConfirm: async () => await deleteCategoryById(id),
     });
   };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {categories.map((category) => (
         <div
           key={category.id}
-          className="p-4 bg-white rounded-lg shadow flex justify-between items-center"
+          className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow flex justify-between items-center"
           style={{ borderLeft: `4px solid ${category.color}` }}
         >
-          <span>{category.name}</span>
+          <Link
+            to={`/categories/${category.id}/todos`}
+            className="text-black dark:text-white font-semibold line-clamp-3 break-words pr-2 hover:underline"
+          >
+            {category.name}
+          </Link>
           <div className="flex space-x-2">
             <Button
-              variant="secondary"
+              variant="warning"
               onClick={() => handleEditCategory(category)}
             >
               Düzenle

@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function Select({
   value,
   onChange,
@@ -11,7 +9,7 @@ export default function Select({
     <select
       value={value}
       onChange={onChange}
-      className={`px-3 py-2 border bg-white border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 w-full md:w-max ${className}`}
+      className={`px-2 py-2 border-3 bg-white dark:bg-gray-700 dark:text-white border-gray-800 dark:border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 text-sm shadow-md cursor-pointer w-full md:w-max ${className}`}
     >
       {placeholder && <option value="">{placeholder}</option>}
       {options.map((option) => (

@@ -1,83 +1,71 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function Modal({
   isOpen,
   onClose,
   title,
-  header,
   children,
-  fullScreen = false, // Tam ekran seçeneği
-  overlayClassName = "bg-black opacity-50", // Arka plan rengi ve opaklık
-  containerClassName = "", // Ekstra stiller için
+  fullScreen = false,
+  overlayClassName = "bg-black/50 backdrop-blur-sm",
+  containerClassName = "",
 }) {
   if (!isOpen) return null;
-
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
 
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={handleOverlayClick}
         >
-          {/* Arka Plan */}
-          <div
-            className={`absolute inset-0 ${overlayClassName} `}
-            onClick={onClose}
-          ></div>
-
-          {/* Modal İçeriği */}
+          {/* Overlay */}
           <motion.div
-            className={`relative ${
-              fullScreen
-                ? "w-screen h-screen p-2 md:max-w-5xl"
-                : "w-[95%] md:w-[90%] h-[70vh] "
-            } overflow-hidden flex flex-col items-center justify-center ${containerClassName}`}
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {/* Başlık ve Kapatma Butonu */}
-            {header && (
-              <div className=" w-full flex items-center mb-2 p-2">
-                {title && (
-                  <h3 className="flex-1 text-center font-semibold text-3xl text-white dark:text-gray-200 pl-4">
-                    {title}
-                  </h3>
-                )}
-                <button
-                  onClick={onClose}
-                  className=" text-red-500 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-full p-2"
-                >
-                  <span className="sr-only">Kapat</span>
-                  <svg
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-            )}
+            className={`absolute inset-0 ${overlayClassName}`}
+            onClick={onClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
 
-            {/* İçerik */}
-            {children}
+          {/* Modal Container */}
+          <motion.div
+            className={`
+              relative 
+              bg-white dark:bg-gray-800 
+              ${fullScreen ? "w-full h-full" : "w-full max-w-2xl max-h-[90vh]"}
+              rounded-lg shadow-xl 
+              flex flex-col 
+              overflow-hidden
+              ${containerClassName}
+            `}
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+            transition={{ duration: 0.2 }}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {title}
+              </h2>
+              <button
+                onClick={onClose}
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 
+                          rounded-full hover:bg-gray-100 dark:hover:bg-gray-700
+                          transition-colors duration-200"
+              >
+                <span className="sr-only">Kapat</span>
+                <XMarkIcon className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 px-6 py-4 overflow-auto bg-white dark:bg-gray-800">
+              <div className="relative">{children}</div>
+            </div>
           </motion.div>
         </motion.div>
       )}

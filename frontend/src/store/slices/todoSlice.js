@@ -26,7 +26,7 @@ const todoSlice = createSlice({
       state.items = action.payload.data;
       state.pagination = action.payload.meta.pagination;
     },
-   
+
     addTodo: (state, action) => {
       state.items.unshift(action.payload);
     },
@@ -35,6 +35,7 @@ const todoSlice = createSlice({
       state.items = state.items.map((todo) =>
         todo.id === updatedTodo.id ? updatedTodo : todo
       );
+      console.log("updatedTodo : ", updatedTodo);
     },
     updatateTodoStatus: (state, action) => {
       const { id, status, updated_at } = action.payload;

@@ -3,6 +3,7 @@ import TodoItem from "./TodoItem";
 import { motion } from "framer-motion";
 import Button from "../common/Button";
 import { useWindowWidth } from "../../utils/formatters";
+import NullData from "../common/NullData";
 
 const container = {
   hidden: { opacity: 0 },
@@ -20,26 +21,22 @@ const item = {
 };
 
 export default function TodoList({ todos }) {
-  const width = useWindowWidth();
   const [viewMode, setViewMode] = useState("list"); // 'list' veya 'grid'
 
-  const isMobile = width < 768;
   return (
     <div className="space-y-4">
-      {!isMobile && (
-        <div className="flex justify-end space-x-2 mb-4">
-          <Button
-            children="Liste"
-            onClick={() => setViewMode("list")}
-            variant={viewMode === "list" ? "primary" : "secondary"}
-          />
-          <Button
-            children="Grid"
-            onClick={() => setViewMode("grid")}
-            variant={viewMode === "grid" ? "primary" : "secondary"}
-          />
-        </div>
-      )}
+      <div className="hidden md:flex justify-end space-x-2 mb-4">
+        <Button
+          children="Liste"
+          onClick={() => setViewMode("list")}
+          variant={viewMode === "list" ? "primary" : "secondary"}
+        />
+        <Button
+          children="Grid"
+          onClick={() => setViewMode("grid")}
+          variant={viewMode === "grid" ? "primary" : "secondary"}
+        />
+      </div>
 
       <motion.div
         variants={container}
@@ -52,9 +49,7 @@ export default function TodoList({ todos }) {
         }`}
       >
         {todos.length === 0 ? (
-          <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-            Henüz görev bulunmuyor
-          </div>
+          <NullData text="Sistemde kayıtlı not yok" />
         ) : (
           todos.map((todo) => (
             <motion.div key={todo.id} variants={item}>

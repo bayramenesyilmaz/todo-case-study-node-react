@@ -2,24 +2,30 @@ import {
   CircleStackIcon,
   EllipsisVerticalIcon,
 } from "@heroicons/react/24/outline";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTodoActions } from "../../hooks/useTodoActions";
 
-export default function StatusDropdown({ todo, isOpen, onToggle }) {
+export default function StatusDropdown({ todo }) {
   const ref = useRef();
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+
   const { handleStatusChange, isLoading } = useTodoActions();
   const loading = isLoading(todo.id);
+
+  const onToggle = () => {
+    setShowStatusDropdown(!showStatusDropdown);
+  };
 
   useEffect(() => {
     const handleClick = (event) => {
       if (ref.current && !ref.current.contains(event.target)) {
-        if (isOpen) onToggle();
+        if (showStatusDropdown) onToggle();
       }
     };
 
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [isOpen, onToggle]);
+  }, [showStatusDropdown, onToggle]);
 
   const handleStatusUpdate = async (status) => {
     await handleStatusChange(todo.id, todo.status, status);
@@ -48,7 +54,7 @@ export default function StatusDropdown({ todo, isOpen, onToggle }) {
     <div className="relative" ref={ref}>
       <button
         onClick={onToggle}
-        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+        className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
         title="Durum Değiştir"
         disabled={loading}
       >
@@ -60,7 +66,7 @@ export default function StatusDropdown({ todo, isOpen, onToggle }) {
         )}
       </button>
 
-      {isOpen && !loading && (
+      {showStatusDropdown && !loading && (
         <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10 py-1 border border-gray-200 dark:border-gray-700">
           {statusOptions.map((option) => (
             <button

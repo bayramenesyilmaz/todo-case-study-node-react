@@ -1,0 +1,5 @@
+export const MODAL_TYPES = {
+  GENERAL: 'GENERAL',
+  SEARCH: 'SEARCH',
+  CONFIRM: 'CONFIRM'
+};

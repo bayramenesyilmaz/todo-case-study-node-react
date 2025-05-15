@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import TodoListPage from "./pages/TodoListPage";
 import TodoDetailPage from "./pages/TodoDetailPage";
 import Categories from "./pages/Categories";
+import ByCategoryNotes from "./pages/ByCategoryNotes";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/todos" element={<TodoListPage />} />
         <Route path="/todos/:id" element={<TodoDetailPage />} />
         <Route path="/categories" element={<Categories />} />
+        <Route path="/categories/:catId/todos" element={<ByCategoryNotes />} />
       </Routes>
     </Layout>
   );

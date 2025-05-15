@@ -9,7 +9,7 @@ export default function SearchBar({ onSearch, placeholder = "Ara..." }) {
   }, 1000);
 
   return (
-    <div className="relative">
+    <div className="relative ">
       <input
         autoFocus
         type="text"

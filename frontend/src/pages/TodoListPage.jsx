@@ -7,13 +7,16 @@ import { motion } from "framer-motion";
 import Pagination from "../components/common/Pagination";
 import Loading from "../components/common/Loading";
 import Error from "../components/common/Error";
-import Button from "../components/common/Button";
 import { useWindowWidth } from "../utils/formatters";
-import { useModal } from "../contexts/ModalContext";
-import { FunnelIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import SearchModal from "../components/common/SearchModal";
+import TodoSearchButton from "../components/todo/TodoSearchButton";
+import ChangeViewButtons from "../components/todo/ChangeViewButtons";
+import MobileFilterButton from "../components/todo/MobileFilterButton";
+import AddTodoButton from "../components/todo/AddTodoButton";
+import Title from "../components/common/Title";
+import NullData from "../components/common/NullData";
 
 export default function TodoListPage() {
+  const width = useWindowWidth();
   const [view, setView] = useState("kanban");
   const {
     todos,
@@ -24,8 +27,6 @@ export default function TodoListPage() {
     updateFilters,
     updatePage,
   } = useTodos();
-  const { openModal, closeModal } = useModal();
-  const width = useWindowWidth();
 
   const handlePageChange = (page) => {
     updatePage(page);
@@ -33,7 +34,6 @@ export default function TodoListPage() {
 
   const handleFilterChange = (newFilters) => {
     updateFilters(newFilters);
-    closeModal();
   };
 
   const isMobile = width < 768;
@@ -48,95 +48,51 @@ export default function TodoListPage() {
 
   if (loading) return <Loading />;
   if (error) return <Error message={error} />;
-  if (!todos || todos.length === 0) {
-    return <div>Sistemde kayıtlı görev yok</div>;
-  }
+  if (!todos || todos.length === 0)
+    return <NullData text="Sistemde kayıtlı not yok" />;
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="space-y-6"
-    >
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Görevler</h1>
-        <div className="flex gap-4">
-          {/* Arama Butonu */}
-          <button
-            onClick={() =>
-              openModal({
-                title: "Notlar",
-                header: true,
-                content: <SearchModal />,
-                fullScreen: true,
-              })
-            }
-            className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
-          >
-            <MagnifyingGlassIcon className="w-5 h-5 text-gray-600" />
-            <span>Arama</span>
-          </button>
-          {!isMobile ? (
-            <>
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+          <Title text="Yapılacaklar" />
+          <div className="w-full md:w-auto flex-1 justify-end flex items-stretch flex-wrap gap-2 md:gap-4">
+            {/* Arama Butonu */}
+            <TodoSearchButton />
+            {!isMobile ? (
               <TodoFilter
                 filters={filters}
                 onFilterChange={handleFilterChange}
               />
-              <div className="flex gap-4 justify-end">
-                <Button
-                  children="Kanban"
-                  onClick={() => setView("kanban")}
-                  variant={view === "kanban" ? "primary" : "secondary"}
-                />
+            ) : (
+              <MobileFilterButton
+                handleFilterChange={handleFilterChange}
+                filters={filters}
+              />
+            )}
 
-                <Button
-                  children="Liste"
-                  onClick={() => setView("list")}
-                  variant={view === "list" ? "primary" : "secondary"}
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              {/* Filtreleme Butonu */}
-              <button
-                onClick={() =>
-                  openModal({
-                    title: "Filtreleme",
-                    header: true,
-                    content: (
-                      <div className="w-full  bg-gray-300 rounded-lg p-4 h-max">
-                        <TodoFilter
-                          filters={filters}
-                          onFilterChange={handleFilterChange}
-                        />
-                      </div>
-                    ),
-                  })
-                }
-                className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
-              >
-                <FunnelIcon className="w-5 h-5 text-gray-600" />
-                <span>Filtrele</span>
-              </button>
-            </>
-          )}
+            <AddTodoButton />
+          </div>
         </div>
-      </div>
 
-      {view === "kanban" ? (
-        <KanbanBoard todos={todos} />
-      ) : (
-        <TodoList todos={todos} />
-      )}
+        {view === "kanban" ? (
+          <KanbanBoard todos={todos} />
+        ) : (
+          <TodoList todos={todos} />
+        )}
+        <ChangeViewButtons setView={setView} view={view} />
 
-      <Pagination
-        currentPage={pagination.current_page}
-        totalItems={pagination.total}
-        itemsPerPage={pagination.per_page}
-        onPageChange={handlePageChange}
-      />
-    </motion.div>
+        <Pagination
+          currentPage={pagination.current_page}
+          totalItems={pagination.total}
+          itemsPerPage={pagination.per_page}
+          onPageChange={handlePageChange}
+        />
+      </motion.div>
+    </>
   );
 }

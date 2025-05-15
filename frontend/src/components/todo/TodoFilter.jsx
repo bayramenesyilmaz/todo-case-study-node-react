@@ -1,18 +1,23 @@
 import React from "react";
 import Select from "../common/Select";
+import { useModal } from "../../contexts/ModalContext";
 
 export default function TodoFilter({ filters, onFilterChange }) {
+  const { closeModal } = useModal();
+
   const priorities = [
+    { value: "", label: "Tümü" },
     { value: "high", label: "Yüksek" },
     { value: "medium", label: "Orta" },
     { value: "low", label: "Düşük" },
   ];
 
   const statuses = [
-    { value: "pending", label: "Yapılacak" },
-    { value: "in_progress", label: "Devam Ediyor" },
-    { value: "completed", label: "Tamamlandı" },
-    { value: "cancelled", label: "İptal Edildi" },
+    { value: "", label: "Tümü" },
+    { value: "pending", label: "Bekleyen" },
+    { value: "in_progress", label: "Devam Eden" },
+    { value: "completed", label: "Tamamlanan" },
+    { value: "cancelled", label: "İptal Edilen" },
   ];
 
   const sortOptions = [
@@ -31,6 +36,7 @@ export default function TodoFilter({ filters, onFilterChange }) {
       sort: sort || "created_at",
       order: order || "desc",
     });
+    closeModal();
   };
 
   return (
