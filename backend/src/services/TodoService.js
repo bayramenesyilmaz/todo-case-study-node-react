@@ -64,6 +64,14 @@ class TodoService {
     }
     return stats;
   }
+
+  async getPriorityStats() {
+    const stats = await TodoRepository.GetPriorityStats();
+    if (!stats) {
+      throw new Error("Öncelik istatistikleri alınırken bir hata oluştu");
+    }
+    return stats;
+  }
 }
 
 module.exports = new TodoService();
