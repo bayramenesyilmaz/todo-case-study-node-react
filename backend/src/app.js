@@ -15,7 +15,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_ORIGIN,
+    origin: "https://todo-case-study-node-react.vercel.app/",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
