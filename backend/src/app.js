@@ -15,9 +15,13 @@ const app = express();
 
 app.use(
   cors({
-    origin: "*", // Geliştirme ve test için geçici çözüm
+    origin:
+      "https://todo-case-study-node-react-bjjljeqys-bayramenesyilmazs-projects.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   })
 );
+
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
