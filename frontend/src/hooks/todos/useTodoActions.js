@@ -35,11 +35,13 @@ export const useTodoActions = () => {
     dispatch(setTodoLoading({ todoId: "add", isLoading: true }));
     try {
       const response = await todoService.createTodo(data);
+
       dispatch(addTodo(response.data));
       toast.success("Not başarıyla eklendi!");
       closeModal();
     } catch (error) {
       toast.error("Not ekleme işlemi başarısız: " + error.message);
+      throw new Error(error.message);
     } finally {
       dispatch(setTodoLoading({ todoId: "add", isLoading: false }));
     }
@@ -94,6 +96,7 @@ export const useTodoActions = () => {
       closeModal();
     } catch (error) {
       toast.error("Güncelleme başarısız: " + error.message);
+      throw new Error(error.message);
     } finally {
       dispatch(setTodoLoading({ todoId: id, isLoading: false }));
     }

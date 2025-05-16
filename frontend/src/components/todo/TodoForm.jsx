@@ -32,13 +32,14 @@ const statusIcons = {
 
 export default function TodoForm({ todo, onSubmit, onClose }) {
   const [isLoading, setIsLoading] = useState(false);
-
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
     setValue,
+    setError,
+    clearErrors,
   } = useForm({
     resolver: zodResolver(todoSchema),
     defaultValues: {
@@ -53,13 +54,23 @@ export default function TodoForm({ todo, onSubmit, onClose }) {
       shared_with: todo?.shared_with?.map((sh) => sh.email) || "",
     },
   });
-
   const handleFormSubmit = async (data) => {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
+      clearErrors(); // Önceki hataları temizle
+      await onSubmit(data);
 
-    await onSubmit(data);
-
-    setIsLoading(false);
+      onClose(); // Sadece başarılı olduğunda kapat
+    } catch (error) {
+      if (error.message.includes("Bu email adresleri sistemde bulunamadı")) {
+        setError("shared_with", {
+          type: "manual",
+          message: error.message,
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const selectedPriority = watch("priority");

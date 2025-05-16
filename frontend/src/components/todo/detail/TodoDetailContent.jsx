@@ -16,18 +16,35 @@ export function TodoDetailContent({ todo }) {
       </div>
 
       {/* Sağ Kolon - Kategoriler */}
-      {todo.categories?.length > 0 && (
-        <div className="space-y-2">
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Kategoriler
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {todo.categories.map((category) => (
-              <CategoryBadge key={category.id} category={category} />
-            ))}
+      <div className="flex flex-col gap-4">
+        {todo.categories?.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Kategoriler
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {todo.categories.map((category) => (
+                <CategoryBadge key={category.id} category={category} />
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+        {todo.shared_with?.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Erişebilen kullanıcılar
+            </h3>
+            <div className="flex flex-wrap gap-x-1 text-sm text-gray-800 dark:text-gray-200">
+              {todo.shared_with.map((user, index) => (
+                <span key={user.id}>
+                  {user.name}
+                  {index < todo.shared_with.length - 1 && <span>,&nbsp;</span>}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

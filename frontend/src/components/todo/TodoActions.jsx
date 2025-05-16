@@ -23,7 +23,7 @@ export default function TodoActions({ todo }) {
           categories={todo.categories}
           onSubmit={async (data) => {
             await handleUpdate(todo.id, data);
-            closeModal();
+            // closeModal();
           }}
           onClose={closeModal}
         />

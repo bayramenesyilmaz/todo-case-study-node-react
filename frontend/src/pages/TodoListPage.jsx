@@ -13,9 +13,11 @@ import AddTodoButton from "../components/todo/AddTodoButton";
 import Title from "../components/common/Title";
 import NullData from "../components/common/NullData";
 import { useViewSettings } from "../hooks/useViewSettings";
+import { useModal } from "../contexts/ModalContext";
 
 export default function TodoListPage() {
   const { todoView, updateTodoView, isMobile } = useViewSettings();
+  const { closeModal } = useModal();
 
   const {
     todos,
@@ -33,11 +35,12 @@ export default function TodoListPage() {
 
   const handleFilterChange = (newFilters) => {
     updateFilters(newFilters);
+    closeModal();
   };
 
   if (loading) return <Loading />;
   if (error) return <Error message={error} />;
-  
+
   return (
     <>
       <motion.div

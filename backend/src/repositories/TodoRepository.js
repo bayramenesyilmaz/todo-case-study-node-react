@@ -92,7 +92,7 @@ class TodoRepository {
           from: "users",
           localField: "shared_with",
           foreignField: "_id",
-          as: "shared_with_users",
+          as: "shared_with",
         },
       },
       {
@@ -107,9 +107,9 @@ class TodoRepository {
           owner: {
             $arrayElemAt: ["$owner", 0],
           },
-          shared_with_users: {
+          shared_with: {
             $map: {
-              input: "$shared_with_users",
+              input: "$shared_with",
               as: "user",
               in: {
                 id: "$$user._id",
@@ -305,7 +305,7 @@ class TodoRepository {
             from: "users",
             localField: "shared_with",
             foreignField: "_id",
-            as: "shared_with_users",
+            as: "shared_with",
           },
         },
         {
@@ -321,9 +321,9 @@ class TodoRepository {
             owner: {
               $arrayElemAt: ["$owner", 0],
             },
-            shared_with_users: {
+            shared_with: {
               $map: {
-                input: "$shared_with_users",
+                input: "$shared_with",
                 as: "user",
                 in: {
                   id: "$$user._id",
