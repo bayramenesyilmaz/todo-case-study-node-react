@@ -2,6 +2,11 @@
 
 Modern ve kullanıcı dostu bir görev yönetim uygulaması. Kanban board tarzında sürükle-bırak özelliği, görev paylaşımı ve çok daha fazlası!
 
+## 🔗 Canlı Demo
+
+[https://todo-case-study-node-react.vercel.app](https://todo-case-study-node-react.vercel.app)
+
+
 ## 🚀 Özellikler
 
 - ✨ Sürükle-bırak kanban board
