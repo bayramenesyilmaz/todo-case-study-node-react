@@ -1,4 +1,15 @@
+const fs = require("fs");
+const path = require("path");
 const { createLogger, format, transports } = require("winston");
+
+const logDir = path.join(__dirname, "../logs");
+
+// Sadece localde klasör oluştur
+if (process.env.NODE_ENV !== "production") {
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir);
+  }
+}
 
 const logger = createLogger({
   level: "error",
@@ -11,8 +22,11 @@ const logger = createLogger({
     })
   ),
   transports: [
-    new transports.Console(), // konsola yaz
-    new transports.File({ filename: "logs/error.log" }), // dosyaya yaz
+    new transports.Console(), // her zaman konsola yaz
+    // Sadece localde dosyaya yaz (production'da hata veriyor)
+    ...(process.env.NODE_ENV !== "production"
+      ? [new transports.File({ filename: path.join(logDir, "error.log") })]
+      : []),
   ],
 });
 
