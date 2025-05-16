@@ -3,21 +3,18 @@ import axios from "axios";
 export const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
-axios.interceptors.request.use(
-  (config) => {
-    const authState = JSON.parse(localStorage.getItem("authState") || "{}");
-    const token = authState.token;
+axios.interceptors.request.use((config) => {
+  const authState = JSON.parse(localStorage.getItem("authState") || "{}");
+  const token = authState.token;
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-);
+
+  config.withCredentials = true; // burası önemli
+
+  return config;
+});
 
 axios.interceptors.response.use(
   (response) => response,
