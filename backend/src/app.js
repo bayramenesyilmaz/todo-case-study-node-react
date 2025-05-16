@@ -13,10 +13,24 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  "https://todo-case-study-node-react.vercel.app",
+  "https://todo-case-study-node-react-faga.vercel.app",
+  "http://localhost:5173/",
+];
+
 app.use(
   cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS policy: Bu origin izinli değil"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
