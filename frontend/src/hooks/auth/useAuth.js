@@ -1,8 +1,8 @@
-// filepath: e:\projeler\ttnet-case\todo-case-study-node-react\frontend\src\hooks\useAuth.js
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { login, logout } from "../../store/slices/authSlice";
+import { authService } from "../../services/authService";
 
 export const useAuth = () => {
   const dispatch = useDispatch();
@@ -15,25 +15,30 @@ export const useAuth = () => {
     setError(null);
 
     try {
-      // Simüle edilmiş API çağrısı
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await authService.login(credentials);
+      const { user, token } = response?.data?.data; // Gelen veriyi çözümle
+      // Token ve kullanıcı bilgilerini slice'a gönder
+      dispatch(login({ user, token }));
 
-      if (
-        credentials.email === "test@test.com" &&
-        credentials.password === "123456"
-      ) {
-        const user = {
-          id: 1,
-          name: "Test User",
-          email: credentials.email,
-          role: "user",
-        };
+      navigate("/");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        dispatch(login(user));
-        navigate("/");
-      } else {
-        throw new Error("Email veya şifre hatalı!");
-      }
+  const handleRegister = async (credentials) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await authService.register(credentials);
+      const { user, token } = response?.data?.data; // Gelen veriyi çözümle
+
+      // Token ve kullanıcı bilgilerini slice'a gönder
+      dispatch(login({ user, token }));
+      navigate("/");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -48,6 +53,7 @@ export const useAuth = () => {
 
   return {
     login: handleLogin,
+    register: handleRegister,
     logout: handleLogout,
     loading,
     error,

@@ -3,6 +3,55 @@ import axios from "axios";
 export const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
+axios.interceptors.request.use(
+  (config) => {
+    const authState = JSON.parse(localStorage.getItem("authState") || "{}");
+    const token = authState.token;
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token geçersiz veya eksik
+      localStorage.removeItem("authState");
+      window.location.href = "/auth";
+    }
+    return Promise.reject(error);
+  }
+);
+
+export const authApis = {
+  // Kullanıcı kaydı
+  register: async (data) => {
+    return await axios.post(`${API_URL}/auth/register`, data);
+  },
+
+  // Kullanıcı girişi
+  login: async (data) => {
+    return await axios.post(`${API_URL}/auth/login`, data);
+  },
+
+  // Kullanıcı bilgilerini al
+  getMe: async (token) => {
+    return await axios.get(`${API_URL}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+};
+
 export const todoApis = {
   getAll: async (params) => {
     const { page, per_page, sort, order, status, priority } = params;

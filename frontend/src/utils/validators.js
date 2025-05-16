@@ -38,6 +38,20 @@ export const todoSchema = z.object({
       message: "Bitiş tarihi bugünden sonra olmalıdır",
     }),
   category_ids: z.array(z.string()).nonempty("En az bir kategori seçmelisiniz"),
+  shared_with: z
+    .string()
+    .optional()
+    .default("")
+    .transform((val) => {
+      if (!val) return [];
+      // Email'leri virgülle ayır ve boşlukları temizle
+      const emails = val
+        .split(",")
+        .map((email) => email.trim())
+        .filter((email) => email !== "");
+
+      return emails;
+    }),
 });
 
 export const categorySchema = z.object({

@@ -8,7 +8,8 @@ export const categoryService = {
       return response.data;
     } catch (error) {
       throw new Error(
-        "Kategoriler alınırken bir hata oluştu: " + error.message
+        error.response?.data?.message ||
+          "Kategoriler alınırken bir hata oluştu: "
       );
     }
   },
@@ -19,7 +20,9 @@ export const categoryService = {
       const response = await categoryApis.getById(id);
       return response.data;
     } catch (error) {
-      throw new Error("Kategori alınırken bir hata oluştu: " + error.message);
+      throw new Error(
+        error.response?.data?.message || "Kategori alınırken bir hata oluştu: "
+      );
     }
   },
 
@@ -30,7 +33,8 @@ export const categoryService = {
       return response.data;
     } catch (error) {
       throw new Error(
-        "Kategori oluşturulurken bir hata oluştu: " + error.message
+        error.response?.data?.message ||
+          "Kategori oluşturulurken bir hata oluştu: "
       );
     }
   },
@@ -42,7 +46,8 @@ export const categoryService = {
       return response.data;
     } catch (error) {
       throw new Error(
-        "Kategori güncellenirken bir hata oluştu: " + error.message
+        error.response?.data?.message ||
+          "Kategori güncellenirken bir hata oluştu: "
       );
     }
   },
@@ -53,7 +58,9 @@ export const categoryService = {
       const response = await categoryApis.delete(id);
       return response.data;
     } catch (error) {
-      throw new Error("Kategori silinirken bir hata oluştu: " + error.message);
+      throw new Error(
+        error.response?.data?.message || "Kategori silinirken bir hata oluştu: "
+      );
     }
   },
 
@@ -64,7 +71,8 @@ export const categoryService = {
       return response.data;
     } catch (error) {
       throw new Error(
-        "Kategoriye ait görevler alınırken bir hata oluştu: " + error.message
+        error.response?.data?.message ||
+          "Kategoriye ait görevler alınırken bir hata oluştu: "
       );
     }
   },

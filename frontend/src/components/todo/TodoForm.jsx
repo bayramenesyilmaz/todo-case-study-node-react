@@ -50,6 +50,7 @@ export default function TodoForm({ todo, onSubmit, onClose }) {
         ? formatDatePicker(todo?.due_date)
         : new Date().toISOString().split("T")[0],
       category_ids: todo?.categories?.map((cat) => cat.id) || [],
+      shared_with: todo?.shared_with?.map((sh) => sh.email) || "",
     },
   });
 
@@ -166,6 +167,29 @@ export default function TodoForm({ todo, onSubmit, onClose }) {
             onChange={(value) => setValue("category_ids", value)}
             error={errors.category_ids?.message}
           />
+        </div>
+
+        {/* Paylaşım Alanı */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">
+            Paylaşılacak Kullanıcılar
+            <span className="text-xs text-gray-500 ml-1">
+              (Virgülle ayırarak email adresleri girin)
+            </span>
+          </label>
+          <textarea
+            {...register("shared_with")}
+            className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-y dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            placeholder="ornek1@mail.com, ornek2@mail.com"
+            defaultValue={todo?.shared_with
+              ?.map((user) => user.email)
+              .join(", ")}
+          />
+          {errors.shared_with && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.shared_with.message}
+            </p>
+          )}
         </div>
       </motion.div>
 
