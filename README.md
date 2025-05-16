@@ -49,9 +49,12 @@ Modern ve kullanıcı dostu bir görev yönetim uygulaması. Kanban board tarzı
 
 3. `.env` dosyasını oluşturun:
    ```env
-   PORT=3001
-   MONGODB_URI=mongodb://localhost:27017/todo-app
+   NODE_ENV=development
+   PORT=8000
+   MONGO_URI=mongodb+srv://<username>:<password>@<cluster-url>/<database-name>?retryWrites=true&w=majority&appName=<app-name>
    JWT_SECRET=your_jwt_secret
+   RATE_LIMIT_WINDOW_MS=15 * 60 * 1000
+   RATE_LIMIT_MAX=100
    ```
 
 4. Sunucuyu başlatın:
@@ -72,7 +75,7 @@ Modern ve kullanıcı dostu bir görev yönetim uygulaması. Kanban board tarzı
 
 3. `.env` dosyasını oluşturun:
    ```env
-   REACT_APP_API_URL=http://localhost:3001
+   VITE_API_URL=http://localhost:8000/api
    ```
 
 4. Uygulamayı başlatın:
