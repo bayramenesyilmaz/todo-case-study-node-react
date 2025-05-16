@@ -17,7 +17,6 @@ export default function AddTodoButton() {
         <TodoForm
           onSubmit={async (data) => {
             await handleCreate(data);
-            closeModal();
           }}
           onClose={closeModal}
         />
