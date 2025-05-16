@@ -14,29 +14,27 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  "https://todo-case-study-node-react.vercel.app",
-  "https://todo-case-study-node-react-faga.vercel.app",
-  "http://localhost:5173"
+  'https://todo-case-study-node-react-7j0wsndix-bayramenesyilmazs-projects.vercel.app',
+  'https://todo-case-study-node-react.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000'
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS policy: Bu origin izinli değil"));
-      }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-    exposedHeaders: ["Content-Range", "X-Content-Range"],
-    maxAge: 86400,
-    preflightContinue: false,
-    optionsSuccessStatus: 204
-  })
-);
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS policy violation'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['X-CSRF-Token', 'X-Requested-With', 'Accept', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Content-Type', 'Date', 'X-Api-Version', 'Authorization'],
+  credentials: true,
+  maxAge: 86400,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+}));
 
 app.use(helmet());
 app.use(express.json());
