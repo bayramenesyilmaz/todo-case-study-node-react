@@ -37,9 +37,7 @@ export default function TodoListPage() {
 
   if (loading) return <Loading />;
   if (error) return <Error message={error} />;
-  if (!todos || todos.length === 0)
-    return <NullData text="Sistemde kayıtlı not yok" />;
-
+  
   return (
     <>
       <motion.div
@@ -67,12 +65,14 @@ export default function TodoListPage() {
             <AddTodoButton />
           </div>
         </div>
-
-        {todoView === "kanban" ? (
+        {todos.length === 0 ? (
+          <NullData text="Sistemde kayıtlı not yok" />
+        ) : todoView === "kanban" ? (
           <KanbanBoard todos={todos} />
         ) : (
           <TodoList todos={todos} />
         )}
+
         <ChangeViewButtons setView={updateTodoView} view={todoView} />
 
         <Pagination

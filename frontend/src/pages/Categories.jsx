@@ -7,6 +7,7 @@ import CategoryList from "../components/category/CategoryList";
 import { MODAL_TYPES } from "../constants/modalTypes";
 import Title from "../components/common/Title";
 import { useCategories } from "../hooks/categories/useCategories";
+import NullData from "../components/common/NullData";
 
 export default function Categories() {
   const {
@@ -44,12 +45,15 @@ export default function Categories() {
           Yeni Kategori
         </Button>
       </div>
-
-      <CategoryList
-        categories={categories}
-        updateCategoryById={updateCategoryById}
-        deleteCategoryById={deleteCategoryById}
-      />
+      {categories.lengt === 0 ? (
+        <NullData text="Sistemde kayıtlı kategori yok" />
+      ) : (
+        <CategoryList
+          categories={categories}
+          updateCategoryById={updateCategoryById}
+          deleteCategoryById={deleteCategoryById}
+        />
+      )}
     </div>
   );
 }
