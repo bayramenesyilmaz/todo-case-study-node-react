@@ -13,23 +13,13 @@ dotenv.config();
 
 const app = express();
 
-const allowedOrigins = [
-  "https://todo-case-study-node-react.vercel.app",
-  "https://todo-case-study-node-react-7shl9ju43-bayramenesyilmazs-projects.vercel.app",
-];
-
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS hatası: izin verilmeyen origin"));
-      }
-    },
-    credentials: true,
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
+
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
