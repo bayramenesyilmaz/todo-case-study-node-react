@@ -14,15 +14,10 @@ export function useSearch() {
     const fetchTodos = async () => {
       try {
         setLoading(true);
-        console.log(searchQuery);
 
         const response = await todoService.searchTodos({ q: searchQuery });
         setTodos(response.data);
-
-        console.log("log : ", response.data);
       } catch (error) {
-        console.log(error);
-
         setError(error.message);
       } finally {
         setLoading(false);

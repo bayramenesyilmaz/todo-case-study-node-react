@@ -7,7 +7,9 @@ export const todoService = {
 
       return response.data;
     } catch (error) {
-      throw new Error("Notlar alınırken bir hata oluştu: " + error.message);
+      throw new Error(
+        error.response?.data?.message || "Notlar alınırken bir hata oluştu: "
+      );
     }
   },
   async getTodoById(id) {
@@ -15,7 +17,9 @@ export const todoService = {
       const response = await todoApis.getById(id);
       return response.data;
     } catch (error) {
-      throw new Error("Not alınırken bir hata oluştu: " + error.message);
+      throw new Error(
+        error.response?.data?.message || "Not alınırken bir hata oluştu: "
+      );
     }
   },
   async createTodo(data) {
@@ -23,7 +27,9 @@ export const todoService = {
       const response = await todoApis.create(data);
       return response.data;
     } catch (error) {
-      throw new Error("Not oluşturulurken bir hata oluştu: " + error.message);
+      throw new Error(
+        error.response?.data?.message || "Not oluşturulurken bir hata oluştu: "
+      );
     }
   },
   async updateTodo(id, data) {
@@ -31,7 +37,9 @@ export const todoService = {
       const response = await todoApis.update(id, data);
       return response.data;
     } catch (error) {
-      throw new Error("Not güncellenirken bir hata oluştu: " + error.message);
+      throw new Error(
+        error.response?.data?.message || "Not güncellenirken bir hata oluştu: "
+      );
     }
   },
   async deleteTodo(id) {
@@ -39,7 +47,9 @@ export const todoService = {
       const response = await todoApis.deleteTodo(id);
       return response.data;
     } catch (error) {
-      throw new Error("Not silinirken bir hata oluştu: " + error.message);
+      throw new Error(
+        error.response?.data?.message || "Not silinirken bir hata oluştu: "
+      );
     }
   },
   async updateTodoStatus(id, status) {
@@ -48,7 +58,8 @@ export const todoService = {
       return response.data;
     } catch (error) {
       throw new Error(
-        "Not durumu güncellenirken bir hata oluştu: " + error.message
+        error.response?.data?.message ||
+          "Not durumu güncellenirken bir hata oluştu: "
       );
     }
   },
@@ -58,7 +69,9 @@ export const todoService = {
       const response = await todoApis.search(params);
       return response.data;
     } catch (error) {
-      throw new Error("Notlar aranırken bir hata oluştu: " + error.message);
+      throw new Error(
+        error.response?.data?.message || "Notlar aranırken bir hata oluştu: "
+      );
     }
   },
 
@@ -68,7 +81,8 @@ export const todoService = {
       return response.data;
     } catch (error) {
       throw new Error(
-        "Not istatistikleri alınırken bir hata oluştu: " + error.message
+        error.response?.data?.message ||
+          "Not istatistikleri alınırken bir hata oluştu: "
       );
     }
   },
@@ -79,8 +93,8 @@ export const todoService = {
       return response.data;
     } catch (error) {
       throw new Error(
-        "Öncelik durumuna göre not istatistikleri alınırken bir hata oluştu: " +
-          error.message
+        error.response?.data?.message ||
+          "Öncelik durumuna göre not istatistikleri alınırken bir hata oluştu: "
       );
     }
   },

@@ -4,9 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../../utils/validators";
 import Input from "../common/Input";
 import Button from "../common/Button";
+import { useAuth } from "../../hooks/auth/useAuth";
 
 export default function RegisterForm() {
-  const [isLoading, setIsLoading] = useState(false);
+  const { register: onRegister, loading, error } = useAuth();
   const {
     register,
     handleSubmit,
@@ -16,13 +17,16 @@ export default function RegisterForm() {
   });
 
   const onSubmit = async (data) => {
-    setIsLoading(true);
-    console.log(data); // API entegrasyonu yapılacak
-    setIsLoading(false);
+    await onRegister(data);
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {error && (
+        <div className="bg-red-50 dark:bg-red-900 text-red-500 dark:text-red-200 p-3 rounded-md text-sm">
+          {error}
+        </div>
+      )}
       <Input
         label="Ad Soyad"
         {...register("name")}
@@ -53,7 +57,7 @@ export default function RegisterForm() {
       <Button
         type="submit"
         variant="primary"
-        loading={isLoading}
+        loading={loading}
         className="w-full"
       >
         Kayıt Ol
