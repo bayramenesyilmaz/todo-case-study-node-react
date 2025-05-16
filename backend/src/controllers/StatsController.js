@@ -4,7 +4,7 @@ const { successResponse, errorResponse } = require("../utils/response");
 class StatsController {
   async getStats(req, res) {
     try {
-      const stats = await TodoService.getStats();
+      const stats = await TodoService.getStats(req.user.id);
       return successResponse(res, 200, "İstatistikler başarıyla alındı", stats);
     } catch (error) {
       return errorResponse(
@@ -18,7 +18,7 @@ class StatsController {
 
   async getPriorityStats(req, res) {
     try {
-      const stats = await TodoService.getPriorityStats();
+      const stats = await TodoService.getPriorityStats(req.user.id);
       return successResponse(
         res,
         200,

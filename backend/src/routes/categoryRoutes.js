@@ -1,19 +1,31 @@
-const express = require('express');
-const CategoryController = require('../controllers/CategoryController');
-const validator = require('../middlewares/validator.js');
+const express = require("express");
+const CategoryController = require("../controllers/CategoryController");
+const validator = require("../middlewares/validator.js");
 const {
   createCategorySchema,
   updateCategorySchema,
-} = require('../validations/categoryValidation');
+} = require("../validations/categoryValidation");
 
 const router = express.Router();
 
-router.get('/', CategoryController.getAllCategories);
-router.get('/:id', CategoryController.getCategoryById);
-router.get('/:id/todos', CategoryController.getTodosByCategoryId);
+const { authenticate } = require("../middlewares/authentication");
 
-router.post('/', validator(createCategorySchema), CategoryController.createCategory);
-router.put('/:id', validator(updateCategorySchema), CategoryController.updateCategory);
-router.delete('/:id', CategoryController.deleteCategory);
+router.use(authenticate); // Tüm istatistik rotaları için authentication gerekli
+
+router.get("/", CategoryController.getAllCategories);
+router.get("/:id", CategoryController.getCategoryById);
+router.get("/:id/todos", CategoryController.getTodosByCategoryId);
+
+router.post(
+  "/",
+  validator(createCategorySchema),
+  CategoryController.createCategory
+);
+router.put(
+  "/:id",
+  validator(updateCategorySchema),
+  CategoryController.updateCategory
+);
+router.delete("/:id", CategoryController.deleteCategory);
 
 module.exports = router;

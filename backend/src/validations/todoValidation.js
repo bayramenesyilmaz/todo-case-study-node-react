@@ -28,6 +28,20 @@ const createTodoSchema = Joi.object({
     "any.required": "Kategori seçimi zorunludur",
     "array.base": "Kategoriler bir dizi olmalıdır",
   }),
+  shared_with: Joi.array()
+    .items(
+      Joi.string()
+        .regex(/^[0-9a-fA-F]{24}$/)
+        .messages({
+          "string.pattern.base": "Geçersiz kullanıcı ID formatı",
+        })
+    )
+    .unique()
+    .default([])
+    .messages({
+      "array.unique": "Aynı kullanıcı birden fazla kez eklenemez",
+      "array.base": "Paylaşılan kullanıcılar bir dizi olmalıdır",
+    }),
 });
 
 const updateTodoSchema = Joi.object({
@@ -51,6 +65,19 @@ const updateTodoSchema = Joi.object({
     "date.greater": "Bitiş tarihi bugünden sonraki bir tarih olmalıdır.",
   }),
   category_ids: Joi.array().items(Joi.string()),
+  shared_with: Joi.array()
+    .items(
+      Joi.string()
+        .regex(/^[0-9a-fA-F]{24}$/)
+        .messages({
+          "string.pattern.base": "Geçersiz kullanıcı ID formatı",
+        })
+    )
+    .unique()
+    .messages({
+      "array.unique": "Aynı kullanıcı birden fazla kez eklenemez",
+      "array.base": "Paylaşılan kullanıcılar bir dizi olmalıdır",
+    }),
 });
 
 const updateStatusSchema = Joi.object({
