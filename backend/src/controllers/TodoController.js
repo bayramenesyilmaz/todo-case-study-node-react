@@ -4,7 +4,7 @@ const logger = require("../utils/logger");
 class TodoController {
   async getAllTodos(req, res) {
     try {
-      const result = await TodoService.getAllTodos(req.query);
+      const result = await TodoService.getAllTodos(req.query, req.user.id);
       return successResponse(
         res,
         200,
@@ -13,6 +13,8 @@ class TodoController {
         { pagination: result.pagination }
       );
     } catch (error) {
+      console.log("res err: ", error);
+      
       return errorResponse(
         res,
         500,
@@ -40,18 +42,11 @@ class TodoController {
 
   async createTodo(req, res) {
     try {
-      const todo = await TodoService.createTodo(req.body);
-      // const formattedTodo = {
-      //   id: todo._id,
-      //   title: todo.title,
-      //   description: todo.description,
-      //   status: todo.status,
-      //   priority: todo.priority,
-      //   due_date: todo.due_date,
-      //   created_at: todo.created_at,
-      //   updated_at: todo.updated_at,
-      //   categories: todo.category_ids,
-      // };
+      const todo = await TodoService.createTodo({
+        ...req.body,
+        owner_id: req.user.id,
+      });
+
       return successResponse(res, 201, "Not başarıyla oluşturuldu", todo);
     } catch (error) {
       return errorResponse(
@@ -120,7 +115,7 @@ class TodoController {
   }
   async searchTodos(req, res) {
     try {
-      const result = await TodoService.searchTodos(req.query);
+      const result = await TodoService.searchTodos(req.query, req.user.id);
       if (!result) {
         return errorResponse(res, 404, "Not bulunamadı");
       }

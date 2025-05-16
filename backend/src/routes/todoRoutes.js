@@ -2,6 +2,13 @@ const express = require("express");
 const TodoController = require("../controllers/TodoController");
 const validator = require("../middlewares/validator.js");
 const {
+  authenticate,
+  canDeleteTodo,
+  canAccessTodo,
+  convertEmailsToUserIds,
+} = require("../middlewares/authentication");
+
+const {
   createTodoSchema,
   updateTodoSchema,
   updateStatusSchema,
@@ -9,18 +16,31 @@ const {
 
 const router = express.Router();
 
-router.get("/", TodoController.getAllTodos);
-router.get("/search", TodoController.searchTodos);
-router.get("/:id", TodoController.getTodoById);
+router.get("/", authenticate, TodoController.getAllTodos);
+router.get("/search", authenticate, TodoController.searchTodos);
+router.get("/:id", authenticate, canAccessTodo, TodoController.getTodoById);
 
-router.post("/", validator(createTodoSchema), TodoController.createTodo);
-router.put("/:id", validator(updateTodoSchema), TodoController.updateTodo);
+router.post(
+  "/",
+  authenticate,
+  convertEmailsToUserIds,
+  validator(createTodoSchema),
+  TodoController.createTodo
+);
+router.put(
+  "/:id",
+  authenticate,
+  convertEmailsToUserIds,
+  validator(updateTodoSchema),
+  TodoController.updateTodo
+);
 router.patch(
   "/:id/status",
+  authenticate,
   validator(updateStatusSchema),
   TodoController.updateTodoStatus
 );
 
-router.delete("/:id", TodoController.deleteTodo);
+router.delete("/:id", authenticate, canDeleteTodo, TodoController.deleteTodo);
 
 module.exports = router;

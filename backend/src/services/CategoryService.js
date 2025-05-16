@@ -37,8 +37,8 @@ class CategoryService {
     }
     return category;
   }
-  async getTodosByCategoryId(id) {
-    const todos = await CategoryRepository.FindTodosByCategoryId(id);
+  async getTodosByCategoryId(id, userId) {
+    const todos = await CategoryRepository.FindTodosByCategoryId(id, userId);
     if (!todos) {
       return null;
     }

@@ -49,18 +49,32 @@ class CategoryRepository {
     return category;
   }
 
-  async FindTodosByCategoryId(id) {
-    if (!mongoose.isValidObjectId(id)) {
+  async FindTodosByCategoryId(id, userId) {
+    if (!mongoose.isValidObjectId(id) || !mongoose.isValidObjectId(userId)) {
       return null;
     }
 
     const todos = await Todo.find({
       category_ids: id,
       deleted_at: null,
-    }).populate({
-      path: "category_ids",
-      select: "id name color",
-    });
+      $or: [
+        { owner_id: new mongoose.Types.ObjectId(userId) },
+        { shared_with: new mongoose.Types.ObjectId(userId) },
+      ],
+    }).populate([
+      {
+        path: "category_ids",
+        select: "id name color",
+      },
+      {
+        path: "owner_id",
+        select: "id name email",
+      },
+      {
+        path: "shared_with",
+        select: "id name email",
+      },
+    ]);
 
     return todos;
   }

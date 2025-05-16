@@ -101,9 +101,12 @@ class CategoryController {
 
   async getTodosByCategoryId(req, res) {
     try {
-      const todos = await CategoryService.getTodosByCategoryId(req.params.id);
+      const todos = await CategoryService.getTodosByCategoryId(
+        req.params.id,
+        req.user.id
+      );
       if (!todos) {
-        return errorResponse(res, 404, "Bu kategori ye ait notlar bulunamadı");
+        return errorResponse(res, 404, "Bu kategoriye ait notlar bulunamadı");
       }
       return successResponse(res, 200, "Notlar başarıyla alındı", todos);
     } catch (error) {

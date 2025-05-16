@@ -1,8 +1,9 @@
+const mongoose = require("mongoose");
 const TodoRepository = require("../repositories/TodoRepository");
 
 class TodoService {
-  async getAllTodos(query) {
-    const todos = await TodoRepository.FindAll(query);
+  async getAllTodos(query, userId) {
+    const todos = await TodoRepository.FindAll({ ...query, userId });
     if (!todos) {
       throw new Error("Notlar alınırken bir hata oluştu");
     }
@@ -49,24 +50,34 @@ class TodoService {
     return todo;
   }
 
-  async searchTodos(query) {
-    const todos = await TodoRepository.Search(query);
-    if (!todos) {
-      return null;
+  async searchTodos(query, userId) {
+    try {
+      // userId kontrolü
+      if (!userId || !mongoose.isValidObjectId(userId)) {
+        throw new Error("Geçersiz kullanıcı ID'si");
+      }
+
+      const todos = await TodoRepository.Search(userId, query);
+      if (!todos) {
+        return null;
+      }
+      return todos;
+    } catch (error) {
+      console.error("Search error in service:", error);
+      throw error;
     }
-    return todos;
   }
 
-  async getStats() {
-    const stats = await TodoRepository.GetStats();
+  async getStats(userId) {
+    const stats = await TodoRepository.GetStats(userId);
     if (!stats) {
       throw new Error("İstatistikler alınırken bir hata oluştu");
     }
     return stats;
   }
 
-  async getPriorityStats() {
-    const stats = await TodoRepository.GetPriorityStats();
+  async getPriorityStats(userId) {
+    const stats = await TodoRepository.GetPriorityStats(userId);
     if (!stats) {
       throw new Error("Öncelik istatistikleri alınırken bir hata oluştu");
     }

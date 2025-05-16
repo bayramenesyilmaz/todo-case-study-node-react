@@ -11,10 +11,17 @@ class TodoRepository {
     low: 1,
   };
 
-  #createBasicQuery({ status, priority }) {
+  #createBasicQuery({ status, priority, userId }) {
     const query = { deleted_at: null };
     if (status) query.status = status;
     if (priority) query.priority = priority;
+
+    if (userId) {
+      query.$or = [
+        { owner_id: new mongoose.Types.ObjectId(userId) },
+        { shared_with: new mongoose.Types.ObjectId(userId) },
+      ];
+    }
     return query;
   }
 
@@ -45,6 +52,7 @@ class TodoRepository {
   }
 
   async FindAll({
+    userId,
     page = 1,
     limit = 10,
     sort = "created_at",
@@ -56,7 +64,7 @@ class TodoRepository {
     const currentLimit = parseInt(limit);
     const skip = (currentPage - 1) * currentLimit;
 
-    const query = this.#createBasicQuery({ status, priority });
+    const query = this.#createBasicQuery({ status, priority, userId });
 
     const pipeline = [
       { $match: query },
@@ -72,6 +80,22 @@ class TodoRepository {
         },
       },
       {
+        $lookup: {
+          from: "users",
+          localField: "owner_id",
+          foreignField: "_id",
+          as: "owner",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "shared_with",
+          foreignField: "_id",
+          as: "shared_with_users",
+        },
+      },
+      {
         $project: {
           title: 1,
           description: 1,
@@ -80,6 +104,20 @@ class TodoRepository {
           due_date: 1,
           created_at: 1,
           updated_at: 1,
+          owner: {
+            $arrayElemAt: ["$owner", 0],
+          },
+          shared_with_users: {
+            $map: {
+              input: "$shared_with_users",
+              as: "user",
+              in: {
+                id: "$$user._id",
+                email: "$$user.email",
+                name: "$$user.name",
+              },
+            },
+          },
           category_ids: {
             $map: {
               input: "$categories",
@@ -132,10 +170,20 @@ class TodoRepository {
     const todo = await Todo.findOne({
       _id: id,
       deleted_at: null,
-    }).populate({
-      path: "category_ids",
-      select: "id name color",
-    });
+    }).populate([
+      {
+        path: "category_ids",
+        select: "id name color",
+      },
+      {
+        path: "shared_with",
+        select: "id name email",
+      },
+      {
+        path: "owner_id",
+        select: "id name email",
+      },
+    ]);
 
     return todo;
   }
@@ -143,10 +191,16 @@ class TodoRepository {
   async Create(data) {
     const todo = new Todo(data);
     await todo.save();
-    return await Todo.findById(todo._id).populate({
-      path: "category_ids",
-      select: "id name color",
-    });
+    return await Todo.findById(todo._id).populate([
+      {
+        path: "category_ids",
+        select: "id name color",
+      },
+      {
+        path: "shared_with",
+        select: "id name email",
+      },
+    ]);
   }
 
   async Update(id, todoData) {
@@ -157,10 +211,15 @@ class TodoRepository {
       { _id: id, deleted_at: null },
       { ...todoData, updated_at: Date.now() },
       { new: true }
-    ).populate({
-      path: "category_ids",
-      select: "id name color",
-    });
+    )
+      .populate({
+        path: "category_ids",
+        select: "id name color",
+      })
+      .populate({
+        path: "shared_with",
+        select: "id name email",
+      });
 
     return todo;
   }
@@ -189,173 +248,248 @@ class TodoRepository {
     return todo;
   }
 
-  async Search(params) {
-    const currentPage = parseInt(1);
-    const currentLimit = parseInt(10);
+  async Search(userId, params) {
+    try {
+      const currentPage = parseInt(params?.page || 1);
+      const currentLimit = parseInt(params?.limit || 20);
+      const searchQuery = params?.q || "";
 
-    const { q } = params;
+      // Gelen userId string ise ObjectId'ye çevir
+      const userObjectId =
+        typeof userId === "string"
+          ? new mongoose.Types.ObjectId(userId)
+          : userId;
 
-    const query = {
-      deleted_at: null,
-    };
+      const query = {
+        deleted_at: null,
+        $and: [
+          {
+            $or: [{ owner_id: userObjectId }, { shared_with: userObjectId }],
+          },
+        ],
+      };
 
-    const skip = (currentPage - 1) * currentLimit;
-    const sortQuery = { created_at: 1 };
+      // Arama sorgusu varsa ekle
+      if (searchQuery.trim()) {
+        const searchRegex = new RegExp(searchQuery, "i");
+        query.$and.push({
+          $or: [{ title: searchRegex }, { description: searchRegex }],
+        });
+      }
 
-    const searchRegex = new RegExp(q, "i");
+      const skip = (currentPage - 1) * currentLimit;
 
-    const todos = await Todo.find({
-      ...query,
-      $or: [{ title: searchRegex }, { description: searchRegex }],
-    })
-      .populate({
-        path: "category_ids",
-        select: "id name color ",
-      })
-      .sort(sortQuery)
-      .skip(skip)
-      .limit(currentLimit);
-
-    const total = await Todo.countDocuments({
-      ...query,
-      $or: [{ title: searchRegex }, { description: searchRegex }],
-    });
-
-    return {
-      todos,
-      pagination: createPagination({
-        total,
-        page: currentPage,
-        limit: currentLimit,
-        count: todos.length,
-      }),
-    };
-  }
-
-  async GetStats() {
-    const currentDate = new Date();
-
-    const stats = await Todo.aggregate([
-      {
-        $match: {
-          deleted_at: null,
+      const pipeline = [
+        { $match: query },
+        { $sort: { created_at: -1 } },
+        { $skip: skip },
+        { $limit: currentLimit },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category_ids",
+            foreignField: "_id",
+            as: "categories",
+          },
         },
-      },
-      {
-        $group: {
-          _id: null,
-          pending: {
-            $sum: {
-              $cond: [{ $eq: ["$status", "pending"] }, 1, 0],
+        {
+          $lookup: {
+            from: "users",
+            localField: "owner_id",
+            foreignField: "_id",
+            as: "owner",
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "shared_with",
+            foreignField: "_id",
+            as: "shared_with_users",
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            title: 1,
+            description: 1,
+            status: 1,
+            priority: 1,
+            due_date: 1,
+            created_at: 1,
+            updated_at: 1,
+            owner: {
+              $arrayElemAt: ["$owner", 0],
             },
-          },
-          in_progress: {
-            $sum: {
-              $cond: [{ $eq: ["$status", "in_progress"] }, 1, 0],
-            },
-          },
-          completed: {
-            $sum: {
-              $cond: [{ $eq: ["$status", "completed"] }, 1, 0],
-            },
-          },
-          cancelled: {
-            $sum: {
-              $cond: [{ $eq: ["$status", "cancelled"] }, 1, 0],
-            },
-          },
-          total: {
-            $sum: 1,
-          },
-          overdue: {
-            $sum: {
-              $cond: [
-                {
-                  $and: [
-                    { $lt: ["$due_date", currentDate] },
-                    { $in: ["$status", ["pending", "in_progress"]] },
-                    { $ne: ["$status", "cancelled"] },
-                  ],
+            shared_with_users: {
+              $map: {
+                input: "$shared_with_users",
+                as: "user",
+                in: {
+                  id: "$$user._id",
+                  email: "$$user.email",
+                  name: "$$user.name",
                 },
-                1,
-                0,
-              ],
+              },
+            },
+            categories: {
+              $map: {
+                input: "$categories",
+                as: "category",
+                in: {
+                  id: "$$category._id",
+                  name: "$$category.name",
+                  color: "$$category.color",
+                },
+              },
             },
           },
         },
-      },
-      {
-        $project: {
-          _id: 0,
-          pending: 1,
-          in_progress: 1,
-          completed: 1,
-          cancelled: 1,
-          total: 1,
-          overdue: 1,
-        },
-      },
-    ]);
+      ];
 
-    return (
-      stats[0] || {
-        pending: 0,
-        in_progress: 0,
-        completed: 0,
-        cancelled: 0,
-        total: 0,
-        overdue: 0,
-      }
-    );
+      const [results, total] = await Promise.all([
+        Todo.aggregate(pipeline),
+        Todo.countDocuments(query),
+      ]);
+
+      return {
+        todos: results.map((todo) => ({
+          ...todo,
+          id: todo._id,
+        })),
+        pagination: createPagination({
+          total,
+          page: currentPage,
+          limit: currentLimit,
+          count: results.length,
+        }),
+      };
+    } catch (error) {
+      console.error("Search error:", error);
+      throw error;
+    }
   }
 
-  async GetPriorityStats() {
-    const stats = await Todo.aggregate([
-      {
-        $match: {
-          deleted_at: null,
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          low: {
-            $sum: {
-              $cond: [{ $eq: ["$priority", "low"] }, 1, 0],
-            },
-          },
-          medium: {
-            $sum: {
-              $cond: [{ $eq: ["$priority", "medium"] }, 1, 0],
-            },
-          },
-          high: {
-            $sum: {
-              $cond: [{ $eq: ["$priority", "high"] }, 1, 0],
-            },
-          },
-          total: { $sum: 1 },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          low: 1,
-          medium: 1,
-          high: 1,
-          total: 1,
-        },
-      },
-    ]);
+  async GetStats(userId) {
+    try {
+      const currentDate = new Date();
+      const userObjectId = new mongoose.Types.ObjectId(userId);
 
-    return (
-      stats[0] || {
-        low: 0,
-        medium: 0,
-        high: 0,
-        total: 0,
-      }
-    );
+      const pipeline = [
+        {
+          $match: {
+            deleted_at: null,
+            $or: [{ owner_id: userObjectId }, { shared_with: userObjectId }],
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            pending: {
+              $sum: {
+                $cond: [{ $eq: ["$status", "pending"] }, 1, 0],
+              },
+            },
+            in_progress: {
+              $sum: {
+                $cond: [{ $eq: ["$status", "in_progress"] }, 1, 0],
+              },
+            },
+            completed: {
+              $sum: {
+                $cond: [{ $eq: ["$status", "completed"] }, 1, 0],
+              },
+            },
+            cancelled: {
+              $sum: {
+                $cond: [{ $eq: ["$status", "cancelled"] }, 1, 0],
+              },
+            },
+            total: { $sum: 1 },
+            overdue: {
+              $sum: {
+                $cond: [
+                  {
+                    $and: [
+                      { $lt: ["$due_date", currentDate] },
+                      { $in: ["$status", ["pending", "in_progress"]] },
+                    ],
+                  },
+                  1,
+                  0,
+                ],
+              },
+            },
+          },
+        },
+      ];
+
+      const result = await Todo.aggregate(pipeline);
+
+      return (
+        result[0] || {
+          pending: 0,
+          in_progress: 0,
+          completed: 0,
+          cancelled: 0,
+          total: 0,
+          overdue: 0,
+        }
+      );
+    } catch (error) {
+      console.error("GetStats error:", error);
+      throw error;
+    }
+  }
+
+  async GetPriorityStats(userId) {
+    try {
+      const userObjectId = new mongoose.Types.ObjectId(userId);
+
+      const pipeline = [
+        {
+          $match: {
+            deleted_at: null,
+            $or: [{ owner_id: userObjectId }, { shared_with: userObjectId }],
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            low: {
+              $sum: {
+                $cond: [{ $eq: ["$priority", "low"] }, 1, 0],
+              },
+            },
+            medium: {
+              $sum: {
+                $cond: [{ $eq: ["$priority", "medium"] }, 1, 0],
+              },
+            },
+            high: {
+              $sum: {
+                $cond: [{ $eq: ["$priority", "high"] }, 1, 0],
+              },
+            },
+            total: { $sum: 1 },
+          },
+        },
+      ];
+
+      const result = await Todo.aggregate(pipeline);
+
+      return (
+        result[0] || {
+          low: 0,
+          medium: 0,
+          high: 0,
+          total: 0,
+        }
+      );
+    } catch (error) {
+      console.error("GetPriorityStats error:", error);
+      throw error;
+    }
   }
 }
 
