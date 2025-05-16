@@ -11,7 +11,8 @@ axios.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
-  config.withCredentials = true; // burası önemli
+  config.withCredentials = false; // Vercel deployment için false yapıldı
+  config.headers["Content-Type"] = "application/json";
 
   return config;
 });
