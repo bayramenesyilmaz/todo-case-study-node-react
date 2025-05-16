@@ -16,7 +16,7 @@ const app = express();
 const allowedOrigins = [
   "https://todo-case-study-node-react.vercel.app",
   "https://todo-case-study-node-react-faga.vercel.app",
-  "http://localhost:5173/",
+  "http://localhost:5173"
 ];
 
 app.use(
@@ -29,8 +29,12 @@ app.use(
       }
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    exposedHeaders: ["Content-Range", "X-Content-Range"],
+    maxAge: 86400,
+    preflightContinue: false,
+    optionsSuccessStatus: 204
   })
 );
 
